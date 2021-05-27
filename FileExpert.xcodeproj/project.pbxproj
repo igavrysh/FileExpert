@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,10 @@
 		D53A7400265F712E0050D67C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D53A73FE265F712E0050D67C /* LaunchScreen.storyboard */; };
 		D53A740B265F712F0050D67C /* FileExpertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A740A265F712F0050D67C /* FileExpertTests.swift */; };
 		D53A7416265F712F0050D67C /* FileExpertUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7415265F712F0050D67C /* FileExpertUITests.swift */; };
+		D53A746E265F87260050D67C /* GoogleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A746D265F87260050D67C /* GoogleService.swift */; };
+		D53A7486265FDFE30050D67C /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7485265FDFE30050D67C /* File.swift */; };
+		D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A74D526601E5D0050D67C /* FolderViewController.swift */; };
+		D53A74FB266032C00050D67C /* GoogleService-Info.plist.plist in Resources */ = {isa = PBXBuildFile; fileRef = D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +62,10 @@
 		D53A7411265F712F0050D67C /* FileExpertUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FileExpertUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D53A7415265F712F0050D67C /* FileExpertUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExpertUITests.swift; sourceTree = "<group>"; };
 		D53A7417265F712F0050D67C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D53A746D265F87260050D67C /* GoogleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleService.swift; sourceTree = "<group>"; };
+		D53A7485265FDFE30050D67C /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		D53A74D526601E5D0050D67C /* FolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewController.swift; sourceTree = "<group>"; };
+		D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist.plist"; sourceTree = "<group>"; };
 		E00EAF6EFF30B676012C6E4C /* Pods_FileExpertTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FileExpertTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -99,7 +107,6 @@
 				D3197F202C06F87074AF7A26 /* Pods-FileExpertTests.debug.xcconfig */,
 				4E0E19D16C2C4B52B3C95403 /* Pods-FileExpertTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -138,6 +145,10 @@
 		D53A73F2265F712D0050D67C /* FileExpert */ = {
 			isa = PBXGroup;
 			children = (
+				D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */,
+				D53A74CC26601E360050D67C /* Controllers */,
+				D53A7484265FDFD70050D67C /* Models */,
+				D53A746C265F870D0050D67C /* Service */,
 				D53A73F3265F712D0050D67C /* AppDelegate.swift */,
 				D53A73F5265F712D0050D67C /* SceneDelegate.swift */,
 				D53A73F7265F712D0050D67C /* ViewController.swift */,
@@ -166,6 +177,30 @@
 			path = FileExpertUITests;
 			sourceTree = "<group>";
 		};
+		D53A746C265F870D0050D67C /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				D53A746D265F87260050D67C /* GoogleService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		D53A7484265FDFD70050D67C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D53A7485265FDFE30050D67C /* File.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D53A74CC26601E360050D67C /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D53A74D526601E5D0050D67C /* FolderViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -177,6 +212,8 @@
 				D53A73EC265F712D0050D67C /* Sources */,
 				D53A73ED265F712D0050D67C /* Frameworks */,
 				D53A73EE265F712D0050D67C /* Resources */,
+				E292112121ED94373EBCFDE8 /* [CP] Embed Pods Frameworks */,
+				C60E1E975000B4BAB23BD02D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -214,6 +251,8 @@
 				D53A740D265F712F0050D67C /* Sources */,
 				D53A740E265F712F0050D67C /* Frameworks */,
 				D53A740F265F712F0050D67C /* Resources */,
+				24DC7C4E07B39566D7AAB671 /* [CP] Embed Pods Frameworks */,
+				335A898A51C35EEDCAC3F55D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -272,6 +311,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D53A74FB266032C00050D67C /* GoogleService-Info.plist.plist in Resources */,
 				D53A7400265F712E0050D67C /* LaunchScreen.storyboard in Resources */,
 				D53A73FD265F712E0050D67C /* Assets.xcassets in Resources */,
 			);
@@ -316,6 +356,40 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		24DC7C4E07B39566D7AAB671 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert-FileExpertUITests/Pods-FileExpert-FileExpertUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert-FileExpertUITests/Pods-FileExpert-FileExpertUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FileExpert-FileExpertUITests/Pods-FileExpert-FileExpertUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		335A898A51C35EEDCAC3F55D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert-FileExpertUITests/Pods-FileExpert-FileExpertUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert-FileExpertUITests/Pods-FileExpert-FileExpertUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FileExpert-FileExpertUITests/Pods-FileExpert-FileExpertUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		6AAAC108878D71A8966A6CC0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -336,6 +410,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C60E1E975000B4BAB23BD02D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert/Pods-FileExpert-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert/Pods-FileExpert-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FileExpert/Pods-FileExpert-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CB1B70004395D361CED9525D /* [CP] Check Pods Manifest.lock */ = {
@@ -360,6 +451,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E292112121ED94373EBCFDE8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert/Pods-FileExpert-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileExpert/Pods-FileExpert-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FileExpert/Pods-FileExpert-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -367,6 +475,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D53A7486265FDFE30050D67C /* File.swift in Sources */,
+				D53A746E265F87260050D67C /* GoogleService.swift in Sources */,
+				D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */,
 				D53A73F8265F712D0050D67C /* ViewController.swift in Sources */,
 				D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */,
 				D53A73F6265F712D0050D67C /* SceneDelegate.swift in Sources */,
