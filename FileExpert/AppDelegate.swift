@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Google
 import GoogleSignIn
 
 @main

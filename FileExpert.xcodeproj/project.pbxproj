@@ -17,10 +17,11 @@
 		D53A7400265F712E0050D67C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D53A73FE265F712E0050D67C /* LaunchScreen.storyboard */; };
 		D53A740B265F712F0050D67C /* FileExpertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A740A265F712F0050D67C /* FileExpertTests.swift */; };
 		D53A7416265F712F0050D67C /* FileExpertUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7415265F712F0050D67C /* FileExpertUITests.swift */; };
-		D53A746E265F87260050D67C /* GoogleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A746D265F87260050D67C /* GoogleService.swift */; };
+		D53A746E265F87260050D67C /* SheetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A746D265F87260050D67C /* SheetService.swift */; };
 		D53A7486265FDFE30050D67C /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7485265FDFE30050D67C /* File.swift */; };
 		D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A74D526601E5D0050D67C /* FolderViewController.swift */; };
 		D53A74FB266032C00050D67C /* GoogleService-Info.plist.plist in Resources */ = {isa = PBXBuildFile; fileRef = D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */; };
+		D53A751B2660471E0050D67C /* Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A751A2660471E0050D67C /* Sheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,10 +63,11 @@
 		D53A7411265F712F0050D67C /* FileExpertUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FileExpertUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D53A7415265F712F0050D67C /* FileExpertUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExpertUITests.swift; sourceTree = "<group>"; };
 		D53A7417265F712F0050D67C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D53A746D265F87260050D67C /* GoogleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleService.swift; sourceTree = "<group>"; };
+		D53A746D265F87260050D67C /* SheetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetService.swift; sourceTree = "<group>"; };
 		D53A7485265FDFE30050D67C /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		D53A74D526601E5D0050D67C /* FolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewController.swift; sourceTree = "<group>"; };
 		D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist.plist"; sourceTree = "<group>"; };
+		D53A751A2660471E0050D67C /* Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheet.swift; sourceTree = "<group>"; };
 		E00EAF6EFF30B676012C6E4C /* Pods_FileExpertTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FileExpertTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -180,7 +182,7 @@
 		D53A746C265F870D0050D67C /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				D53A746D265F87260050D67C /* GoogleService.swift */,
+				D53A746D265F87260050D67C /* SheetService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -189,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				D53A7485265FDFE30050D67C /* File.swift */,
+				D53A751A2660471E0050D67C /* Sheet.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -475,8 +478,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D53A751B2660471E0050D67C /* Sheet.swift in Sources */,
 				D53A7486265FDFE30050D67C /* File.swift in Sources */,
-				D53A746E265F87260050D67C /* GoogleService.swift in Sources */,
+				D53A746E265F87260050D67C /* SheetService.swift in Sources */,
 				D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */,
 				D53A73F8265F712D0050D67C /* ViewController.swift in Sources */,
 				D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */,

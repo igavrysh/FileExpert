@@ -18,4 +18,6 @@ struct Directory {
     
     var subdirectories: [Directory]
     var files: [File]
+    
+
 }
