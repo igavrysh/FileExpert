@@ -16,6 +16,60 @@ extension UILabel {
     }
 }
 
+extension UILabel {
+    @discardableResult func fitFontForSize(
+        _ constrainedSize: CGSize,
+        maxFontSize: CGFloat = 100,
+        minFontSize: CGFloat = 5,
+        accuracy: CGFloat = 1
+    ) -> CGSize {
+        assert(maxFontSize > minFontSize)
+
+        var minFontSize = minFontSize
+        var maxFontSize = maxFontSize
+        var fittingSize = constrainedSize
+
+        while maxFontSize - minFontSize > accuracy {
+            let midFontSize: CGFloat = ((minFontSize + maxFontSize) / 2)
+            font = font.withSize(midFontSize)
+            fittingSize = sizeThatFits(constrainedSize)
+            if fittingSize.height <= constrainedSize.height
+                && fittingSize.width <= constrainedSize.width {
+                minFontSize = midFontSize
+            } else {
+                maxFontSize = midFontSize
+            }
+        }
+        return fittingSize
+    }
+    
+    @discardableResult func fontSizeToFitSize(
+        _ constrainedSize: CGSize,
+        maxFontSize: CGFloat = 100,
+        minFontSize: CGFloat = 5,
+        accuracy: CGFloat = 1
+    ) -> CGFloat {
+        assert(maxFontSize > minFontSize)
+
+        var minFontSize = minFontSize
+        var maxFontSize = maxFontSize
+        var fittingSize = constrainedSize
+
+        while maxFontSize - minFontSize > accuracy {
+            let midFontSize: CGFloat = ((minFontSize + maxFontSize) / 2)
+            font = font.withSize(midFontSize)
+            fittingSize = sizeThatFits(constrainedSize)
+            if fittingSize.height <= constrainedSize.height
+                && fittingSize.width <= constrainedSize.width {
+                minFontSize = midFontSize
+            } else {
+                maxFontSize = midFontSize
+            }
+        }
+        return (minFontSize + maxFontSize) / 2
+    }
+}
+
 extension UIImageView {
     convenience init(cornerRadius: CGFloat) {
         self.init(image: nil)

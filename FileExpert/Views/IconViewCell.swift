@@ -9,7 +9,9 @@ import UIKit
 
 class IconViewCell: UICollectionViewCell {
     
+    let iconCellFillRatio: CGFloat = 0.6
     let iconView = UIImageView()
+    let iconHeight: CGFloat
     var iconWidthConstraint: NSLayoutConstraint? = nil
     var iconHeightConstraint: NSLayoutConstraint? = nil
     
@@ -23,14 +25,14 @@ class IconViewCell: UICollectionViewCell {
     func setIconImage(_ image: UIImage) {
         let ratio = image.size.width / image.size.height
         self.iconView.image = image
-        self.iconWidthConstraint.map { $0.constant = 64 }
-        self.iconWidthConstraint.map { $0.constant = ratio * 64 }
+        self.iconWidthConstraint.map { $0.constant = iconHeight }
+        self.iconWidthConstraint.map { $0.constant = ratio * iconHeight }
     }
     
     var item: ItemModel? = nil
 
     override init(frame: CGRect) {
-        
+        iconHeight = frame.height * iconCellFillRatio
         super.init(frame: frame)
         self.backgroundView = {
             let v = UIView()
@@ -46,12 +48,16 @@ class IconViewCell: UICollectionViewCell {
             self.addSubview(v)
             return v
         }()
-
+        
+        let textHeight = frame.height * (1 - iconCellFillRatio) / 4
+        let fontSize = self.nameLabel.fontSizeToFitSize(CGSize(width: frame.width, height: textHeight))
+        nameLabel.font = .systemFont(ofSize: fontSize)
+        
         nameLabel.text = "placeholder"
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconHeightConstraint = self.iconView.constrainHeight(constant: 64)
-        iconWidthConstraint = self.iconView.constrainWidth(constant: 64)
+        iconHeightConstraint = self.iconView.constrainHeight(constant: iconHeight)
+        iconWidthConstraint = self.iconView.constrainWidth(constant: iconHeight)
         
         let dummyView = UIView()
         dummyView.translatesAutoresizingMaskIntoConstraints = false
