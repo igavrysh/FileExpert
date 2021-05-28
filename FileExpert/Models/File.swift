@@ -17,8 +17,15 @@ class File {
     }
 }
 
+enum ItemType {
+    case file
+    case directory
+}
+
 struct ItemModel {
+    var id: String
     var name: String
+    var type: ItemType
 }
 
 class Directory {
@@ -46,9 +53,11 @@ class Directory {
         }
         
         if (index < subdirs.count) {
-            return ItemModel(name: subdirs[index].name)
+            let dir = subdirs[index]
+            return ItemModel(id: dir.id, name: dir.name, type: .directory)
         } else {
-            return ItemModel(name: files[index - subdirs.count].name)
+            let file = files[index - subdirs.count]
+            return ItemModel(id: file.id, name: file.name, type: .file)
         }
     }
 }

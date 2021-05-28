@@ -14,9 +14,9 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
     var directory: Directory? = nil
     
     let cellId = "id"
-    let sectionInsets = UIEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0, right: 8.0)
+    let sectionInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
     let numberOfItemsPerRow: CGFloat = 3.0
-    let spacingBetweenCells: CGFloat = 8.0
+    let spacingBetweenCells: CGFloat = 4.0
     
     let activityIndicatorView: UIActivityIndicatorView = {
         let aiv = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
@@ -35,7 +35,7 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
         view.addSubview(activityIndicatorView)
         activityIndicatorView.fillSuperview()
         
-        collectionView.backgroundColor = .red
+        collectionView.backgroundColor = .white
         
         fetchData()
     }
@@ -71,7 +71,7 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
         directory
             .flatMap({ $0.item(at: indexPath.row) })
             .map({ cell.updateUIWithItem($0) })
-        cell.backgroundColor = UIColor.yellow
+            //cell.backgroundColor = UIColor.yellow
         return cell
     }
     
