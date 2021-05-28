@@ -20,8 +20,13 @@
 		D53A746E265F87260050D67C /* SheetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A746D265F87260050D67C /* SheetService.swift */; };
 		D53A7486265FDFE30050D67C /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7485265FDFE30050D67C /* File.swift */; };
 		D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A74D526601E5D0050D67C /* FolderViewController.swift */; };
-		D53A74FB266032C00050D67C /* GoogleService-Info.plist.plist in Resources */ = {isa = PBXBuildFile; fileRef = D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */; };
 		D53A751B2660471E0050D67C /* Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A751A2660471E0050D67C /* Sheet.swift */; };
+		D53A752626609B080050D67C /* BaseListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A752526609B080050D67C /* BaseListController.swift */; };
+		D53A752C266134290050D67C /* IconViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A752B266134280050D67C /* IconViewCell.swift */; };
+		D53A7535266139270050D67C /* VerticalStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7534266139270050D67C /* VerticalStackView.swift */; };
+		D53A753A266139A30050D67C /* HorizontalStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7539266139A30050D67C /* HorizontalStackView.swift */; };
+		D53A753F26613A1A0050D67C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A753E26613A1A0050D67C /* Extensions.swift */; };
+		D53A754426613A330050D67C /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A754326613A330050D67C /* UIView+Layout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,8 +71,13 @@
 		D53A746D265F87260050D67C /* SheetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetService.swift; sourceTree = "<group>"; };
 		D53A7485265FDFE30050D67C /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		D53A74D526601E5D0050D67C /* FolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewController.swift; sourceTree = "<group>"; };
-		D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist.plist"; sourceTree = "<group>"; };
 		D53A751A2660471E0050D67C /* Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheet.swift; sourceTree = "<group>"; };
+		D53A752526609B080050D67C /* BaseListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseListController.swift; sourceTree = "<group>"; };
+		D53A752B266134280050D67C /* IconViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconViewCell.swift; sourceTree = "<group>"; };
+		D53A7534266139270050D67C /* VerticalStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalStackView.swift; sourceTree = "<group>"; };
+		D53A7539266139A30050D67C /* HorizontalStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalStackView.swift; sourceTree = "<group>"; };
+		D53A753E26613A1A0050D67C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		D53A754326613A330050D67C /* UIView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		E00EAF6EFF30B676012C6E4C /* Pods_FileExpertTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FileExpertTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -147,7 +157,8 @@
 		D53A73F2265F712D0050D67C /* FileExpert */ = {
 			isa = PBXGroup;
 			children = (
-				D53A74FA266032C00050D67C /* GoogleService-Info.plist.plist */,
+				D53A7533266139170050D67C /* Helpers */,
+				D53A752A266134030050D67C /* Views */,
 				D53A74CC26601E360050D67C /* Controllers */,
 				D53A7484265FDFD70050D67C /* Models */,
 				D53A746C265F870D0050D67C /* Service */,
@@ -200,8 +211,28 @@
 			isa = PBXGroup;
 			children = (
 				D53A74D526601E5D0050D67C /* FolderViewController.swift */,
+				D53A752526609B080050D67C /* BaseListController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		D53A752A266134030050D67C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D53A752B266134280050D67C /* IconViewCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D53A7533266139170050D67C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				D53A7534266139270050D67C /* VerticalStackView.swift */,
+				D53A7539266139A30050D67C /* HorizontalStackView.swift */,
+				D53A753E26613A1A0050D67C /* Extensions.swift */,
+				D53A754326613A330050D67C /* UIView+Layout.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,7 +345,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D53A74FB266032C00050D67C /* GoogleService-Info.plist.plist in Resources */,
 				D53A7400265F712E0050D67C /* LaunchScreen.storyboard in Resources */,
 				D53A73FD265F712E0050D67C /* Assets.xcassets in Resources */,
 			);
@@ -484,7 +514,13 @@
 				D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */,
 				D53A73F8265F712D0050D67C /* ViewController.swift in Sources */,
 				D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */,
+				D53A752626609B080050D67C /* BaseListController.swift in Sources */,
+				D53A754426613A330050D67C /* UIView+Layout.swift in Sources */,
+				D53A753F26613A1A0050D67C /* Extensions.swift in Sources */,
+				D53A752C266134290050D67C /* IconViewCell.swift in Sources */,
 				D53A73F6265F712D0050D67C /* SceneDelegate.swift in Sources */,
+				D53A753A266139A30050D67C /* HorizontalStackView.swift in Sources */,
+				D53A7535266139270050D67C /* VerticalStackView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

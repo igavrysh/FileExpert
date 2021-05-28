@@ -11,9 +11,16 @@ struct Sheet {
     var rows: [SheetRecord] = []
 }
 
-struct SheetRecord {
+struct SheetRecord: Hashable {
     let id: String
-    let parentFolder: String
+    let parentId: String
     let type: String
     let name: String
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(parentId)
+        hasher.combine(type)
+        hasher.combine(name)
+    }
 }
