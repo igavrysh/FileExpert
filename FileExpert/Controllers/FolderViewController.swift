@@ -8,9 +8,15 @@
 import UIKit
 import Foundation
 
+enum FolderStyle {
+    case list
+    case icons
+}
+
 class FolderViewController: BaseListController,
                             UICollectionViewDelegateFlowLayout
 {
+    var style: FolderStyle
     let sheetService = SheetService()
     var directory: Directory? = nil
     
@@ -29,6 +35,15 @@ class FolderViewController: BaseListController,
         return aiv
     } ()
     
+    init(style: FolderStyle) {
+        self.style = style
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -43,13 +58,24 @@ class FolderViewController: BaseListController,
             activityIndicatorView.fillSuperview()
             fetchData()
         }
+        
+        let emailButton = UIBarButtonItem(
+            image: UIImage(systemName: "envelope")!, landscapeImagePhone: UIImage(systemName: "envelope")!,
+            style: .plain,
+            target: self,
+            action: #selector(action(_:)))
+        self.navigationItem.rightBarButtonItem = emailButton
+    }
+    
+    @objc func action(_ sender: AnyObject) {
+        Swift.debugPrint("CustomRightViewController IBAction invoked")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         _ = self.collectionView.indexPathsForSelectedItems?.map { indexPath in
-            if let cell = self.collectionView.cellForItem(at: indexPath) as? IconViewCell {
-                cell.unhighliht()
+            if let cell = self.collectionView.cellForItem(at: indexPath) as? ItemView {
+                cell.unhighlight()
             }
         }
     }
@@ -83,7 +109,7 @@ class FolderViewController: BaseListController,
             cell.highlight()
         }
         if let newDir = directory?.directory(at: indexPath.item) {
-            let childVC = FolderViewController()
+            let childVC = FolderViewController(style: .icons)
             childVC.directory = newDir
             navigationController?.modalPresentationStyle = .fullScreen
             navigationController?.pushViewController(childVC, animated: true)
@@ -92,7 +118,7 @@ class FolderViewController: BaseListController,
     
     override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
-            cell.unhighliht()
+            cell.unhighlight()
         }
     }
     
@@ -159,7 +185,7 @@ class FolderViewController: BaseListController,
     
     override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
-            cell.unhighliht()
+            cell.unhighlight()
         }
     }
 }

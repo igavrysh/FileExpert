@@ -10,18 +10,14 @@ import UIKit
 class MainViewController: UINavigationController {
     
     init() {
-        super.init(rootViewController: FolderViewController())
+        super.init(rootViewController: FolderViewController(style: .icons))
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationBar.prefersLargeTitles = false
-        self.navigationBar.topItem?.title = "File Expert"
-    
-        self.title = "File Expert"
-        self.navigationItem.title = "FileExpert"
-        self.tabBarController?.title = "File Expert"
     }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

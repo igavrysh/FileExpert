@@ -7,14 +7,15 @@
 
 import UIKit
 
-class IconViewCell: UICollectionViewCell {
+class IconViewCell: UICollectionViewCell, ItemView {
     
     let iconCellFillRatio: CGFloat = 0.6
     let iconView = UIImageView()
     let iconHeight: CGFloat
     var iconWidthConstraint: NSLayoutConstraint? = nil
     var iconHeightConstraint: NSLayoutConstraint? = nil
-    
+    var item: ItemModel? = nil
+
     let nameLabel: UILabel = {
         var l = UILabel(text: "hello", font: .systemFont(ofSize: 12), numberOfLines: 2)
         l.textAlignment = .center
@@ -35,14 +36,12 @@ class IconViewCell: UICollectionViewCell {
         }
     }
     
-    func unhighliht() {
+    func unhighlight() {
         self.backgroundView.map{
             $0.layer.backgroundColor = UIColor.white.cgColor
         }
     }
     
-    var item: ItemModel? = nil
-
     override init(frame: CGRect) {
         iconHeight = frame.height * iconCellFillRatio
         super.init(frame: frame)
