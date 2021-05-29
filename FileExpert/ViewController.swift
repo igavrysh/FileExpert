@@ -47,7 +47,8 @@ class ViewController: UIViewController, GIDSignInDelegate {
             return
         }
         
-        let fvc = FolderViewController()
+        let fvc = MainViewController()
+        fvc.navigationItem.title = "HOHO"
         fvc.modalPresentationStyle = .fullScreen
         self.present(fvc, animated: true, completion: nil)
 

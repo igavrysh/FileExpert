@@ -60,6 +60,10 @@ class Directory {
             return ItemModel(id: file.id, name: file.name, type: .file)
         }
     }
+    
+    func directory(at index: Int) -> Directory? {
+        return index >= 0 && index < subdirs.count ? subdirs[index] : nil
+    }
 }
 
 fileprivate class Container {

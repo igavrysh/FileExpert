@@ -8,8 +8,9 @@
 import UIKit
 import Foundation
 
-class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayout {
-    
+class FolderViewController: BaseListController,
+                            UICollectionViewDelegateFlowLayout
+{
     let sheetService = SheetService()
     var directory: Directory? = nil
     
@@ -17,6 +18,8 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
     let sectionInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
     let numberOfItemsPerRow: CGFloat = 3.0
     let spacingBetweenCells: CGFloat = 4.0
+    
+    let simpleOver = SimpleOver()
     
     let activityIndicatorView: UIActivityIndicatorView = {
         let aiv = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
@@ -28,14 +31,27 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .blue
     
+        self.view.backgroundColor = .blue
         collectionView.register(IconViewCell.self, forCellWithReuseIdentifier: cellId)
-        
-        view.addSubview(activityIndicatorView)
-        activityIndicatorView.fillSuperview()
         collectionView.backgroundColor = .white
-        fetchData()
+        if let currDir = self.directory {
+            self.title = currDir.name
+        } else {
+            self.title = "File Expert"
+            view.addSubview(activityIndicatorView)
+            activityIndicatorView.fillSuperview()
+            fetchData()
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        _ = self.collectionView.indexPathsForSelectedItems?.map { indexPath in
+            if let cell = self.collectionView.cellForItem(at: indexPath) as? IconViewCell {
+                cell.unhighliht()
+            }
+        }
     }
     
     fileprivate func updateUI() {
@@ -61,15 +77,33 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
         }
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
+            cell.highlight()
+        }
+        if let newDir = directory?.directory(at: indexPath.item) {
+            let childVC = FolderViewController()
+            childVC.directory = newDir
+            navigationController?.modalPresentationStyle = .fullScreen
+            navigationController?.pushViewController(childVC, animated: true)
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
+            cell.unhighliht()
+        }
+    }
+    
     override func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! IconViewCell
         directory
-            .flatMap({ $0.item(at: indexPath.row) })
+            .flatMap({ $0.item(at: indexPath.item) })
             .map({ cell.updateUIWithItem($0) })
-            //cell.backgroundColor = UIColor.yellow
         return cell
     }
     
@@ -82,10 +116,11 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let totalSpacing = (2 * sectionInsets.left) + ((numberOfItemsPerRow - 1) * spacingBetweenCells) //Amount of total spacing in a row
+        let totalSpacing = (2 * sectionInsets.left)
+            + ((numberOfItemsPerRow - 1) * spacingBetweenCells) //Amount of total spacing in a row
 
         if let collection = self.collectionView{
-            let width = (collection.bounds.width - totalSpacing)/numberOfItemsPerRow
+            let width = (collection.bounds.width - totalSpacing) / numberOfItemsPerRow
             return CGSize(width: width, height: width)
         } else {
             return CGSize(width: 0, height: 0)
@@ -114,5 +149,17 @@ class FolderViewController: BaseListController, UICollectionViewDelegateFlowLayo
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
         return 0
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
+            cell.highlight()
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
+            cell.unhighliht()
+        }
     }
 }

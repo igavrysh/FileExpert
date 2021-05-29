@@ -29,6 +29,18 @@ class IconViewCell: UICollectionViewCell {
         self.iconWidthConstraint.map { $0.constant = ratio * iconHeight }
     }
     
+    func highlight() {
+        self.backgroundView.map{
+            $0.layer.backgroundColor = UIColor.init(red: 0, green: 111.0/255.0, blue: 247.0 / 255.0, alpha: 0.2).cgColor
+        }
+    }
+    
+    func unhighliht() {
+        self.backgroundView.map{
+            $0.layer.backgroundColor = UIColor.white.cgColor
+        }
+    }
+    
     var item: ItemModel? = nil
 
     override init(frame: CGRect) {
