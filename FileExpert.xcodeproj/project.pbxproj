@@ -31,6 +31,7 @@
 		D53A75902661FE9A0050D67C /* SimpleOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A758F2661FE9A0050D67C /* SimpleOver.swift */; };
 		D59FA931266227FE00E1BE54 /* ListViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA930266227FE00E1BE54 /* ListViewCell.swift */; };
 		D59FA93626622B9E00E1BE54 /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA93526622B9E00E1BE54 /* ItemView.swift */; };
+		D59FA93B266233ED00E1BE54 /* IconsFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA93A266233ED00E1BE54 /* IconsFlowLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		D53A758F2661FE9A0050D67C /* SimpleOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOver.swift; sourceTree = "<group>"; };
 		D59FA930266227FE00E1BE54 /* ListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewCell.swift; sourceTree = "<group>"; };
 		D59FA93526622B9E00E1BE54 /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
+		D59FA93A266233ED00E1BE54 /* IconsFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconsFlowLayout.swift; sourceTree = "<group>"; };
 		E00EAF6EFF30B676012C6E4C /* Pods_FileExpertTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FileExpertTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -221,6 +223,7 @@
 				D53A74D526601E5D0050D67C /* FolderViewController.swift */,
 				D53A752526609B080050D67C /* BaseListController.swift */,
 				D53A758A2661BCB00050D67C /* MainViewController.swift */,
+				D59FA93A266233ED00E1BE54 /* IconsFlowLayout.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -528,6 +531,7 @@
 				D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */,
 				D53A73F8265F712D0050D67C /* ViewController.swift in Sources */,
 				D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */,
+				D59FA93B266233ED00E1BE54 /* IconsFlowLayout.swift in Sources */,
 				D53A752626609B080050D67C /* BaseListController.swift in Sources */,
 				D53A758B2661BCB10050D67C /* MainViewController.swift in Sources */,
 				D53A754426613A330050D67C /* UIView+Layout.swift in Sources */,
