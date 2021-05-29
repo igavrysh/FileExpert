@@ -23,7 +23,14 @@ class FolderViewController: BaseListController,
     
     let cellId = "id"
     
-    var flows: [UICollectionViewDelegateFlowLayout] = [IconsFlowLayout()]
+    var flows: [FolderStyle: UICollectionViewDelegateFlowLayout] = [
+        .icons: IconsFlowLayout(),
+        .list: ListFlowLayout()
+    ]
+    var nextFlowIcon: [FolderStyle: UIImage] = [
+        .icons: UIImage(named: "list")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
+        .list: UIImage(named: "icons")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
+    ]
     
     let activityIndicatorView: UIActivityIndicatorView = {
         let aiv = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
@@ -32,6 +39,8 @@ class FolderViewController: BaseListController,
         aiv.hidesWhenStopped = true
         return aiv
     } ()
+    
+    var toggleButton = UIBarButtonItem()
     
     init(style: FolderStyle) {
         self.style = style
@@ -44,29 +53,39 @@ class FolderViewController: BaseListController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
         
-        self.view.backgroundColor = .blue
-        collectionView.register(IconViewCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView.backgroundColor = .white
-        if let currDir = self.directory {
-            self.title = currDir.name
-        } else {
-            self.title = "File Expert"
+        if self.directory == nil {
             view.addSubview(activityIndicatorView)
             activityIndicatorView.fillSuperview()
             fetchData()
         }
-        
-        let emailButton = UIBarButtonItem(
-            image: UIImage(systemName: "envelope")!, landscapeImagePhone: UIImage(systemName: "envelope")!,
-            style: .plain,
-            target: self,
-            action: #selector(action(_:)))
-        self.navigationItem.rightBarButtonItem = emailButton
     }
     
-    @objc func action(_ sender: AnyObject) {
-        Swift.debugPrint("CustomRightViewController IBAction invoked")
+    func setupUI() {
+        self.view.backgroundColor = .blue
+        collectionView.register(IconViewCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView.backgroundColor = .white
+        
+        if let currDir = self.directory {
+            self.title = currDir.name
+        } else {
+            self.title = "File Expert"
+        }
+        toggleButton.style = .plain
+        toggleButton.target = self
+        toggleButton.action = #selector(onToggleButtonTap(_:))
+        self.navigationItem.rightBarButtonItem = toggleButton
+    }
+    
+    @objc func onToggleButtonTap(_ sender: AnyObject) {
+        switch style {
+        case .icons:
+            style = .list
+        case .list:
+            style = .icons
+        }
+        updateUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -79,6 +98,7 @@ class FolderViewController: BaseListController,
     }
     
     fileprivate func updateUI() {
+        toggleButton.image = nextFlowIcon[style]
         self.collectionView.reloadData()
     }
     
@@ -107,7 +127,7 @@ class FolderViewController: BaseListController,
             cell.highlight()
         }
         if let newDir = directory?.directory(at: indexPath.item) {
-            let childVC = FolderViewController(style: .icons)
+            let childVC = FolderViewController(style: self.style)
             childVC.directory = newDir
             navigationController?.modalPresentationStyle = .fullScreen
             navigationController?.pushViewController(childVC, animated: true)
@@ -208,6 +228,6 @@ class FolderViewController: BaseListController,
     }
     
     func currentFlow() -> UICollectionViewDelegateFlowLayout {
-        return flows[style.rawValue]
+        return flows[style]!
     }
 }

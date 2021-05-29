@@ -92,9 +92,9 @@ class IconViewCell: UICollectionViewCell, ItemView {
         var iconImage: UIImage? = nil
         switch item.type {
         case .file:
-            iconImage = UIImage(named: "file")
+            iconImage = UIImage(named: "file-1")
         case .directory:
-            iconImage = UIImage(named: "directory")
+            iconImage = UIImage(named: "directory-2")
         }
         iconImage.map { setIconImage($0) }
     }
