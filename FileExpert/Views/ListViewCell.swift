@@ -7,8 +7,8 @@
 
 import UIKit
 
-class ListViewCell: UICollectionViewCell {
-    
+class ListViewCell: UICollectionViewCell, ItemView {
+
     let iconView = UIImageView()
     let nameLabel: UILabel = {
         var l = UILabel(text: "hello", font: .systemFont(ofSize: 12), numberOfLines: 1)
@@ -26,6 +26,15 @@ class ListViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func highlight() {
+    }
+    
+    func unhighlight() {
+    }
+    
+    func updateUIWithItem(_ item: ItemModel) {
     }
     
 }

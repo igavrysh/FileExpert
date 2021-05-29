@@ -13,24 +13,49 @@ enum FolderStyle: Int {
     case list
 }
 
+struct StyleInfo {
+    let cellId: String
+    let flow: UICollectionViewDelegateFlowLayout
+    let nextIconImage: UIImage
+    let nextStyle: FolderStyle
+}
+
 class FolderViewController: BaseListController,
                             UICollectionViewDelegateFlowLayout
 {
     var style: FolderStyle
-    
     let sheetService = SheetService()
     var directory: Directory? = nil
     
-    let cellId = "id"
+    let info: [FolderStyle: StyleInfo] = [
+        FolderStyle.icons : StyleInfo(
+            cellId: "iconViewCellId",
+            flow: IconsFlowLayout(),
+            nextIconImage: UIImage(named: "list")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
+            nextStyle: .list
+        ),
+        FolderStyle.list : StyleInfo(
+            cellId: "listViewCellId",
+            flow: ListFlowLayout(),
+            nextIconImage: UIImage(named: "icons")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
+            nextStyle: .icons
+        )]
     
-    var flows: [FolderStyle: UICollectionViewDelegateFlowLayout] = [
-        .icons: IconsFlowLayout(),
-        .list: ListFlowLayout()
-    ]
-    var nextFlowIcon: [FolderStyle: UIImage] = [
-        .icons: UIImage(named: "list")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
-        .list: UIImage(named: "icons")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
-    ]
+    func getCellId(for ownStyle: FolderStyle) -> String {
+        return info[ownStyle]!.cellId
+    }
+    
+    func getCellId() -> String {
+        return getCellId(for: style)
+    }
+    
+    func getFlow() -> UICollectionViewDelegateFlowLayout  {
+        return info[style]!.flow
+    }
+    
+    func getNextIcon() -> UIImage {
+        return info[style]!.nextIconImage
+    }
     
     let activityIndicatorView: UIActivityIndicatorView = {
         let aiv = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
@@ -64,7 +89,8 @@ class FolderViewController: BaseListController,
     
     func setupUI() {
         self.view.backgroundColor = .blue
-        collectionView.register(IconViewCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView.register(IconViewCell.self, forCellWithReuseIdentifier: getCellId(for: .icons))
+        collectionView.register(ListViewCell.self, forCellWithReuseIdentifier: getCellId(for: .list))
         collectionView.backgroundColor = .white
         
         if let currDir = self.directory {
@@ -79,12 +105,7 @@ class FolderViewController: BaseListController,
     }
     
     @objc func onToggleButtonTap(_ sender: AnyObject) {
-        switch style {
-        case .icons:
-            style = .list
-        case .list:
-            style = .icons
-        }
+        style = info[style]!.nextStyle
         updateUI()
     }
     
@@ -98,7 +119,7 @@ class FolderViewController: BaseListController,
     }
     
     fileprivate func updateUI() {
-        toggleButton.image = nextFlowIcon[style]
+        toggleButton.image = getNextIcon()
         self.collectionView.reloadData()
     }
     
@@ -122,7 +143,6 @@ class FolderViewController: BaseListController,
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
             cell.highlight()
         }
@@ -144,6 +164,7 @@ class FolderViewController: BaseListController,
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
+        let cellId = getCellId()
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ItemView
         directory
             .flatMap({ $0.item(at: indexPath.item) })
@@ -172,7 +193,7 @@ class FolderViewController: BaseListController,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        guard let size = currentFlow().collectionView?(
+        guard let size = getFlow().collectionView?(
                 collectionView,
                 layout: collectionViewLayout,
                 sizeForItemAt: indexPath
@@ -187,7 +208,7 @@ class FolderViewController: BaseListController,
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        guard let insets = currentFlow().collectionView?(
+        guard let insets = getFlow().collectionView?(
                 collectionView,
                 layout: collectionViewLayout,
                 insetForSectionAt: section
@@ -202,7 +223,7 @@ class FolderViewController: BaseListController,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat {
-        guard let spacing = currentFlow().collectionView?(
+        guard let spacing = getFlow().collectionView?(
                 collectionView,
                 layout: collectionViewLayout,
                 minimumLineSpacingForSectionAt: section
@@ -217,7 +238,7 @@ class FolderViewController: BaseListController,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
-        guard let spacing = currentFlow().collectionView?(
+        guard let spacing = getFlow().collectionView?(
                 collectionView,
                 layout: collectionViewLayout,
                 minimumInteritemSpacingForSectionAt: section
@@ -227,7 +248,4 @@ class FolderViewController: BaseListController,
         return spacing
     }
     
-    func currentFlow() -> UICollectionViewDelegateFlowLayout {
-        return flows[style]!
-    }
 }
