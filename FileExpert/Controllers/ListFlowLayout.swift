@@ -13,7 +13,10 @@ class ListFlowLayout: NSObject, UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 42)
+        let width = collectionView.bounds.width
+            - collectionView.safeAreaInsets.left
+            - collectionView.safeAreaInsets.right
+        return CGSize(width: width, height: 42)
     }
 
     func collectionView(

@@ -97,6 +97,12 @@ class FolderViewController: BaseListController,
             ListViewCell.self,
             forCellWithReuseIdentifier: getCellId(for: DirectoryViewStyle.list))
         collectionView.backgroundColor = .white
+        
+        if let flowLayout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
+            if #available(iOS 11.0, *) {
+                flowLayout.sectionInsetReference = .fromSafeArea
+            }
+        }
     }
     
     func setupTitle() {
@@ -276,5 +282,7 @@ class FolderViewController: BaseListController,
         }
         return spacing
     }
+    
+
     
 }

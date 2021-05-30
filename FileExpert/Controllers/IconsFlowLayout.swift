@@ -18,9 +18,12 @@ class IconsFlowLayout: NSObject, UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
+        let safeAreaWidth = collectionView.bounds.width
+            - collectionView.safeAreaInsets.left
+            - collectionView.safeAreaInsets.right
         let totalSpacing = (2 * sectionInsets.left)
             + ((numberOfItemsPerRow - 1) * spacingBetweenCells) //Amount of total spacing in a row
-        let width = (collectionView.bounds.width - totalSpacing) / numberOfItemsPerRow
+        let width = (safeAreaWidth - totalSpacing) / numberOfItemsPerRow
         return CGSize(width: width, height: width)
     }
 
@@ -47,4 +50,5 @@ class IconsFlowLayout: NSObject, UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 0
     }
+    
 }
