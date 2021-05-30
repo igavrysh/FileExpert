@@ -34,6 +34,7 @@
 		D59FA93B266233ED00E1BE54 /* IconsFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA93A266233ED00E1BE54 /* IconsFlowLayout.swift */; };
 		D59FA9402662466300E1BE54 /* ListFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA93F2662466300E1BE54 /* ListFlowLayout.swift */; };
 		D59FA9452662B37200E1BE54 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA9442662B37200E1BE54 /* AppState.swift */; };
+		D59FA9572663E9EA00E1BE54 /* FileSystemApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA9562663E9EA00E1BE54 /* FileSystemApi.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +93,7 @@
 		D59FA93A266233ED00E1BE54 /* IconsFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconsFlowLayout.swift; sourceTree = "<group>"; };
 		D59FA93F2662466300E1BE54 /* ListFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFlowLayout.swift; sourceTree = "<group>"; };
 		D59FA9442662B37200E1BE54 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		D59FA9562663E9EA00E1BE54 /* FileSystemApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSystemApi.swift; sourceTree = "<group>"; };
 		E00EAF6EFF30B676012C6E4C /* Pods_FileExpertTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FileExpertTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -218,6 +220,7 @@
 				D59FA9442662B37200E1BE54 /* AppState.swift */,
 				D53A7485265FDFE30050D67C /* File.swift */,
 				D53A751A2660471E0050D67C /* Sheet.swift */,
+				D59FA9562663E9EA00E1BE54 /* FileSystemApi.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -534,6 +537,7 @@
 				D53A7486265FDFE30050D67C /* File.swift in Sources */,
 				D53A746E265F87260050D67C /* SheetService.swift in Sources */,
 				D59FA931266227FE00E1BE54 /* ListViewCell.swift in Sources */,
+				D59FA9572663E9EA00E1BE54 /* FileSystemApi.swift in Sources */,
 				D53A74D626601E5D0050D67C /* FolderViewController.swift in Sources */,
 				D53A73F8265F712D0050D67C /* ViewController.swift in Sources */,
 				D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */,

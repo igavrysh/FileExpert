@@ -172,7 +172,7 @@ class FolderViewController: BaseListController,
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
+        if let cell = collectionView.cellForItem(at: indexPath) as? ItemView {
             cell.highlight()
         }
         if let newDir = directory?.directory(at: indexPath.item) {

@@ -10,10 +10,13 @@ import Foundation
 class File {
     var id: String
     var name: String
+    // TODO: review model (should implicit unwrapping be used here?)
+    weak var directory: Directory?
     
-    init(id: String, name: String) {
+    init(id: String, name: String, directory: Directory) {
         self.id = id
         self.name = name
+        self.directory = directory
     }
 }
 
@@ -96,7 +99,7 @@ func dirFromSheet(_ sheet: Sheet) -> Directory? {
         let row = queue.remove(at: 0)
         if row.type == "f" {
             if let parentDir = dirs[row.parentId] {
-                parentDir.files.append(File(id: row.id, name: row.name))
+                parentDir.files.append(File(id: row.id, name: row.name, directory: parentDir))
             }
         }
         if row.type == "d" {

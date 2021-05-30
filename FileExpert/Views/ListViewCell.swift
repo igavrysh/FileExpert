@@ -45,6 +45,16 @@ class ListViewCell: UICollectionViewCell, ItemView {
         iconWidth = frame.height * iconCellFillRatio
 
         super.init(frame: frame)
+        
+        self.backgroundView = {
+            let v = UIView()
+            v.fillSuperview()
+            v.backgroundColor = .white
+            v.layer.shouldRasterize = true
+            self.addSubview(v)
+            return v
+        }()
+        
         let iconContainer = UIView()
     
         iconContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -99,9 +109,15 @@ class ListViewCell: UICollectionViewCell, ItemView {
     }
     
     func highlight() {
+        self.backgroundView.map{
+            $0.layer.backgroundColor = UIColor.init(red: 0, green: 111.0/255.0, blue: 247.0 / 255.0, alpha: 0.2).cgColor
+        }
     }
     
     func unhighlight() {
+        self.backgroundView.map{
+            $0.layer.backgroundColor = UIColor.white.cgColor
+        }
     }
     
     func updateUIWithItem(_ item: ItemModel) {

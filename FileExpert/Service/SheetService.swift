@@ -12,7 +12,7 @@ class SheetService {
     
     static let shared = SheetService()
     
-    private static let SREADSHEET_ID = "1oL1cByCpMXJMz6ifaKDiK6bZC2xE2HkRA4jwHRtRuj8"
+    private static let SREADSHEET_ID = "1rcSWbPMhxGrDCAmge9x8Yr7k8wHVijP1jsiEZpv_Bfk"
     private static let RANGE = "Sheet1"
     private static let API_KEY = "AIzaSyBUXS1Crn_5IxInmyZhw6XoA0P43JbV4Zc"
     
@@ -54,6 +54,38 @@ class SheetService {
                 }
             }
             completion(sheet, error)
+        }
+    }
+    
+    func addFile(_ file: File, completion: @escaping (Sheet?, Error?) -> ()) {
+        guard let directory = file.directory else {
+            completion(nil, self.errorWithDesc("Incorrect File entity, missing File Directory"))
+            return
+        }
+        let valueRange = GTLRSheets_ValueRange.init();
+        valueRange.values = [
+            [file.id, directory.id, "f", file.name]
+        ]
+        let query = GTLRSheetsQuery_SpreadsheetsValuesAppend.query(
+            withObject: valueRange,
+            spreadsheetId: SheetService.SREADSHEET_ID,
+            range: SheetService.RANGE
+        )
+        
+        service.executeQuery(query) { (ticket, result, error) in
+            if let error = error {
+                completion(nil, error)
+                return
+            }
+            
+            guard let valueRange = result as? GTLRSheets_ValueRange,
+                  let rows = valueRange.values as? [[String]]
+            else {
+                completion(nil, self.errorWithDesc("Incorrect spreadsheet format"))
+                return
+            }
+            
+            completion(nil, nil)
         }
     }
     
