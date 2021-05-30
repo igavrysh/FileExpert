@@ -50,9 +50,11 @@ class IconViewCell: UICollectionViewCell, ItemView {
             v.fillSuperview()
             v.backgroundColor = .white
             v.layer.cornerRadius = 8
+            /*
             v.layer.shadowOpacity = 0.1
             v.layer.shadowRadius = 15
             v.layer.shadowOffset = .init(width: 0, height: 15)
+             */
             v.layer.shouldRasterize = true
             v.layer.borderWidth = 0.3
             v.layer.borderColor = UIColor.lightGray.cgColor

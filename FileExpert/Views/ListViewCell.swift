@@ -45,8 +45,6 @@ class ListViewCell: UICollectionViewCell, ItemView {
         iconWidth = frame.height * iconCellFillRatio
 
         super.init(frame: frame)
-        
-        self.backgroundColor = UIColor.yellow
         let iconContainer = UIView()
     
         iconContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -70,8 +68,28 @@ class ListViewCell: UICollectionViewCell, ItemView {
         stackView.alignment = .fill
         stackView.distribution = .fill
         
-        self.addSubview(stackView)
-        stackView.fillSuperview()
+        let separatorContainer = UIView()
+        let separator = UIView()
+        separator.translatesAutoresizingMaskIntoConstraints = true
+        separatorContainer.addSubview(separator)
+        _ = separatorContainer.constrainHeight(constant: 0.3)
+        
+        separator.backgroundColor = UIColor.lightGray
+        _ = separator.constrainHeight(constant: 0.3)
+        separator.leadingAnchor.constraint(equalTo: separatorContainer.leadingAnchor, constant: 8).isActive = true
+        separator.trailingAnchor.constraint(equalTo: separatorContainer.trailingAnchor, constant: -8).isActive = true
+        separator.centerYAnchor.constraint(equalTo: separatorContainer.centerYAnchor).isActive = true
+            
+        let verticalStackView = UIStackView(arrangedSubviews: [stackView, separatorContainer])
+        verticalStackView.axis = .vertical
+        verticalStackView.spacing = 0
+        verticalStackView.alignment = .fill
+        stackView.distribution = .fill
+        
+        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.addSubview(verticalStackView)
+        verticalStackView.fillSuperview()
     
         nameLabel.text = "placeholder"
     }
