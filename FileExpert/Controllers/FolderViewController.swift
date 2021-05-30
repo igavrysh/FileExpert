@@ -8,53 +8,45 @@
 import UIKit
 import Foundation
 
-enum FolderStyle: Int {
-    case icons
-    case list
-}
-
 struct StyleInfo {
     let cellId: String
     let flow: UICollectionViewDelegateFlowLayout
     let nextIconImage: UIImage
-    let nextStyle: FolderStyle
 }
 
 class FolderViewController: BaseListController,
                             UICollectionViewDelegateFlowLayout
 {
-    var style: FolderStyle
     let sheetService = SheetService()
     var directory: Directory? = nil
+    var appState: AppState
     
-    let info: [FolderStyle: StyleInfo] = [
-        FolderStyle.icons : StyleInfo(
+    let info: [DirectoryViewStyle: StyleInfo] = [
+        DirectoryViewStyle.icons : StyleInfo(
             cellId: "iconViewCellId",
             flow: IconsFlowLayout(),
-            nextIconImage: UIImage(named: "list")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
-            nextStyle: .list
+            nextIconImage: UIImage(systemName: "text.justify")!.imageWith(newSize: CGSize.init(width: 24, height: 16))
         ),
-        FolderStyle.list : StyleInfo(
+        DirectoryViewStyle.list : StyleInfo(
             cellId: "listViewCellId",
             flow: ListFlowLayout(),
-            nextIconImage: UIImage(named: "icons")!.imageWith(newSize: CGSize.init(width: 16, height: 16)),
-            nextStyle: .icons
+            nextIconImage: UIImage(systemName: "square.grid.3x2.fill")!.imageWith(newSize: CGSize.init(width: 24, height: 16))
         )]
     
-    func getCellId(for ownStyle: FolderStyle) -> String {
+    func getCellId(for ownStyle: DirectoryViewStyle) -> String {
         return info[ownStyle]!.cellId
     }
     
     func getCellId() -> String {
-        return getCellId(for: style)
+        return getCellId(for: appState.style)
     }
     
     func getFlow() -> UICollectionViewDelegateFlowLayout  {
-        return info[style]!.flow
+        return info[appState.style]!.flow
     }
     
-    func getNextIcon() -> UIImage {
-        return info[style]!.nextIconImage
+    func getNextImageIcon() -> UIImage {
+        return info[appState.style]!.nextIconImage
     }
     
     let activityIndicatorView: UIActivityIndicatorView = {
@@ -67,8 +59,8 @@ class FolderViewController: BaseListController,
     
     var toggleButton = UIBarButtonItem()
     
-    init(style: FolderStyle) {
-        self.style = style
+    init(appState: AppState) {
+        self.appState = appState
         super.init()
     }
     
@@ -89,8 +81,12 @@ class FolderViewController: BaseListController,
     
     func setupUI() {
         self.view.backgroundColor = .blue
-        collectionView.register(IconViewCell.self, forCellWithReuseIdentifier: getCellId(for: .icons))
-        collectionView.register(ListViewCell.self, forCellWithReuseIdentifier: getCellId(for: .list))
+        collectionView.register(
+            IconViewCell.self,
+            forCellWithReuseIdentifier: getCellId(for: DirectoryViewStyle.icons))
+        collectionView.register(
+            ListViewCell.self,
+            forCellWithReuseIdentifier: getCellId(for: DirectoryViewStyle.list))
         collectionView.backgroundColor = .white
         
         if let currDir = self.directory {
@@ -101,11 +97,15 @@ class FolderViewController: BaseListController,
         toggleButton.style = .plain
         toggleButton.target = self
         toggleButton.action = #selector(onToggleButtonTap(_:))
+        toggleButton.image = getNextImageIcon()
         self.navigationItem.rightBarButtonItem = toggleButton
     }
     
     @objc func onToggleButtonTap(_ sender: AnyObject) {
-        style = info[style]!.nextStyle
+        self.appState.toggleNextStyle()
+        // TODO: refactor appstate to be observable and every FolderController should observe changes in it and
+        // react accordingly
+        _ = self.navigationController?.viewControllers.map{ $0 as? FolderViewController }.map{ $0?.updateUI() }
         updateUI()
     }
     
@@ -119,7 +119,7 @@ class FolderViewController: BaseListController,
     }
     
     fileprivate func updateUI() {
-        toggleButton.image = getNextIcon()
+        toggleButton.image = getNextImageIcon()
         self.collectionView.reloadData()
     }
     
@@ -147,7 +147,7 @@ class FolderViewController: BaseListController,
             cell.highlight()
         }
         if let newDir = directory?.directory(at: indexPath.item) {
-            let childVC = FolderViewController(style: self.style)
+            let childVC = FolderViewController(appState: self.appState)
             childVC.directory = newDir
             navigationController?.modalPresentationStyle = .fullScreen
             navigationController?.pushViewController(childVC, animated: true)

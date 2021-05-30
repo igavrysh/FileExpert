@@ -63,8 +63,8 @@ class IconViewCell: UICollectionViewCell, ItemView {
         let textHeight = frame.height * (1 - iconCellFillRatio) / 4
         let fontSize = self.nameLabel.fontSizeToFitSize(CGSize(width: frame.width, height: textHeight))
         nameLabel.font = .systemFont(ofSize: fontSize)
-        
         nameLabel.text = "placeholder"
+        
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         iconView.translatesAutoresizingMaskIntoConstraints = false
         iconHeightConstraint = self.iconView.constrainHeight(constant: iconHeight)
@@ -92,9 +92,9 @@ class IconViewCell: UICollectionViewCell, ItemView {
         var iconImage: UIImage? = nil
         switch item.type {
         case .file:
-            iconImage = UIImage(named: "file-1")
+            iconImage = UIImage(systemName: "doc.richtext")!
         case .directory:
-            iconImage = UIImage(named: "directory-2")
+            iconImage = UIImage(systemName: "folder")!
         }
         iconImage.map { setIconImage($0) }
     }
