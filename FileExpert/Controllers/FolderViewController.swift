@@ -58,6 +58,9 @@ class FolderViewController: BaseListController,
     } ()
     
     var toggleButton = UIBarButtonItem()
+    var userButton = UIBarButtonItem()
+    var addFileButton = UIBarButtonItem()
+    var addDirectoryButton = UIBarButtonItem()
     
     init(appState: AppState) {
         self.appState = appState
@@ -81,6 +84,12 @@ class FolderViewController: BaseListController,
     
     func setupUI() {
         self.view.backgroundColor = .blue
+        setupCollectionView()
+        setupTitle()
+        setupToolbar()
+    }
+    
+    func setupCollectionView() {
         collectionView.register(
             IconViewCell.self,
             forCellWithReuseIdentifier: getCellId(for: DirectoryViewStyle.icons))
@@ -88,25 +97,44 @@ class FolderViewController: BaseListController,
             ListViewCell.self,
             forCellWithReuseIdentifier: getCellId(for: DirectoryViewStyle.list))
         collectionView.backgroundColor = .white
-        
+    }
+    
+    func setupTitle() {
         if let currDir = self.directory {
             self.title = currDir.name
         } else {
             self.title = "File Expert"
         }
-        toggleButton.style = .plain
-        toggleButton.target = self
-        toggleButton.action = #selector(onToggleButtonTap(_:))
-        toggleButton.image = getNextImageIcon()
-        self.navigationItem.rightBarButtonItem = toggleButton
     }
     
-    @objc func onToggleButtonTap(_ sender: AnyObject) {
+    func setupToolbar() {
+        let genButtonWithImage = {[weak self] (image: UIImage) -> UIBarButtonItem in
+            let b = UIBarButtonItem()
+            b.style = .plain
+            b.target = self
+            b.action = #selector(self?.onToolbarButtonTap(_:))
+            b.image = image
+            return b
+        }
+        self.toggleButton = genButtonWithImage(getNextImageIcon())
+        self.addFileButton = genButtonWithImage(UIImage(systemName: "doc.badge.plus")!)
+        self.addDirectoryButton = genButtonWithImage(UIImage(systemName: "plus.rectangle.on.folder")!)
+        self.userButton = genButtonWithImage(UIImage(systemName: "person")!)
+        self.navigationItem.rightBarButtonItems = [self.toggleButton, self.addDirectoryButton, self.addFileButton]
+        
+        if directory?.isRootDirectory ?? true == true {
+            self.navigationItem.leftBarButtonItem = userButton
+        }
+    }
+    
+    @objc func onToolbarButtonTap(_ sender: NSObject) {
         self.appState.toggleNextStyle()
         // TODO: refactor appstate to be observable and every FolderController should observe changes in it and
         // react accordingly
-        _ = self.navigationController?.viewControllers.map{ $0 as? FolderViewController }.map{ $0?.updateUI() }
-        updateUI()
+        if sender == self.toggleButton {
+            _ = self.navigationController?.viewControllers.map{ $0 as? FolderViewController }.map{ $0?.updateUI() }
+            updateUI()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -123,6 +151,7 @@ class FolderViewController: BaseListController,
         self.collectionView.reloadData()
     }
     
+    // TODO: make model observable so that it notifies controller when it loads / refreshes / receives updates
     fileprivate func fetchData() {
         DispatchQueue.global(qos: .background).async { [weak self] in
             self?.sheetService.fetchSheet(completion: { [weak self] (sheet: Sheet?, error: Error?) -> () in

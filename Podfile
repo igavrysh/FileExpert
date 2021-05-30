@@ -9,7 +9,6 @@ target 'FileExpert' do
   pod 'GoogleAPIClientForREST/Sheets'
   pod 'Alamofire'
 
-
   # Pods for FileExpert
 
   target 'FileExpertTests' do

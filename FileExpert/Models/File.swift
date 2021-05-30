@@ -35,6 +35,12 @@ class Directory {
     var files: [File]
     weak var parent: Directory?
     
+    var isRootDirectory: Bool {
+        get {
+            return id == ""
+        }
+    }
+    
     init(id: String, name: String, subdirs: [Directory], files: [File], parent: Directory? = nil) {
         self.id = id
         self.name = name
