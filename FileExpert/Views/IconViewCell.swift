@@ -9,8 +9,6 @@ import UIKit
 
 class IconViewCell: UICollectionViewCell, ItemView {
    
-    
-    
     static let reuseIdentifier = "icon-view-cell-reuse-identifier"
     
     let iconCellFillRatio: CGFloat = 0.6
@@ -18,7 +16,7 @@ class IconViewCell: UICollectionViewCell, ItemView {
     var iconHeight: CGFloat = 0
     var iconWidthConstraint: NSLayoutConstraint? = nil
     var iconHeightConstraint: NSLayoutConstraint? = nil
-    var item: ItemModel? = nil
+    var item: Item? = nil
 
     let nameLabel: UILabel = {
         var l = UILabel(text: "hello", font: .systemFont(ofSize: 12), numberOfLines: 2)
@@ -56,19 +54,29 @@ class IconViewCell: UICollectionViewCell, ItemView {
     }
     
     func updateUIWithItem(_ item: ItemModel) {
+        /*
         self.item = item
         nameLabel.text = item.name
         var iconImage: UIImage? = nil
         switch item.type {
         case .file:
-            iconImage = UIImage(systemName: "doc.richtext")!
         case .directory:
-            iconImage = UIImage(systemName: "folder")!
+            
         }
         iconImage.map { setIconImage($0) }
+        */
     }
     
     func updateWith(_ item: Item) {
+        self.item = item
+        nameLabel.text = item.name
+        var iconImage: UIImage? = nil
+        if item is Folder {
+            iconImage = UIImage(systemName: "folder")!
+        } else {
+            iconImage = UIImage(systemName: "doc.richtext")!
+        }
+        iconImage.map { setIconImage($0) }
     }
     
     required init?(coder: NSCoder) {

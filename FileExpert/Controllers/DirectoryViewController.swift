@@ -83,6 +83,26 @@ extension DirectoryViewController {
 
 extension DirectoryViewController {
     
+    func createListLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0))
+        
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(44.0))
+        
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        
+        return layout
+    }
+    
     func createLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int,
             layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
@@ -95,18 +115,20 @@ extension DirectoryViewController {
                 columns = 5
             }
     
-            let spacing = CGFloat(10)
+            //let spacing = CGFloat(0)
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                                   heightDimension: .fractionalHeight(1.0))
+            // instead of .absolute(120)
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
             let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                   heightDimension: .absolute(120))
+                                                   heightDimension: .estimated(120))
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: columns)
-            group.interItemSpacing = .fixed(spacing)
+            //group.interItemSpacing = .fixed(spacing)
 
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = spacing
-            section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+            //section.interGroupSpacing = spacing
+            section.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
 
             return section
         }
@@ -117,20 +139,9 @@ extension DirectoryViewController {
         view.backgroundColor = .systemBackground
         let layout = createLayout()
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .systemBackground
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
-
-        let views = ["cv": collectionView]
-        var constraints = [NSLayoutConstraint]()
-        constraints.append(contentsOf: NSLayoutConstraint.constraints(
-            withVisualFormat: "H:|[cv]|", options: [], metrics: nil, views: views))
-        constraints.append(contentsOf: NSLayoutConstraint.constraints(
-            withVisualFormat: "V:[cv]|", options: [], metrics: nil, views: views))
-        constraints.append(collectionView.topAnchor.constraint(
-            equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1.0))
-        NSLayoutConstraint.activate(constraints)
         self.directoryCollectionView = collectionView
     }
 }
