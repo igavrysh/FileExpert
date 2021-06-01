@@ -103,6 +103,34 @@ extension DirectoryViewController {
         return layout
     }
     
+    func createGridLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int,
+            layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
+            let contentSize = layoutEnvironment.container.effectiveContentSize
+            var columns: CGFloat = 3
+            if contentSize.width > 600 {
+                columns = 4
+            }
+            if contentSize.width > 1000 {
+                columns = 5
+            }
+    
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0 / columns),
+                                                  heightDimension: .fractionalHeight(1.0))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                   heightDimension: .fractionalWidth(1.0 / columns))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+
+            let section = NSCollectionLayoutSection(group: group)
+            section.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
+
+            return section
+        }
+        return layout
+    }
+    
     func createLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int,
             layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
@@ -137,7 +165,7 @@ extension DirectoryViewController {
     
     func configureHierarchy() {
         view.backgroundColor = .systemBackground
-        let layout = createLayout()
+        let layout = createGridLayout()
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground

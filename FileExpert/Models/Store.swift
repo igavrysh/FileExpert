@@ -25,7 +25,7 @@ class Store {
             guard let rootFolder = self?.rootFolder else { return }
             rootFolder.add(FileNew(name: "file1.txt", id: UUID().uuidString))
             rootFolder.add(FileNew(name: "file2.txt", id: UUID().uuidString))
-            rootFolder.add(Folder(name: "directory1", id: UUID().uuidString))
+            rootFolder.add(Folder(name: "directory1fasdfsafsafsafasfasfsafasfsafasdfsadfadf", id: UUID().uuidString))
             rootFolder.add(Folder(name: "directory2", id: UUID().uuidString))
             rootFolder.add(Folder(name: "directory3", id: UUID().uuidString))
         }
