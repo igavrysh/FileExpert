@@ -8,10 +8,14 @@
 import UIKit
 
 class IconViewCell: UICollectionViewCell, ItemView {
+   
+    
+    
+    static let reuseIdentifier = "icon-view-cell-reuse-identifier"
     
     let iconCellFillRatio: CGFloat = 0.6
     let iconView = UIImageView()
-    let iconHeight: CGFloat
+    var iconHeight: CGFloat = 0
     var iconWidthConstraint: NSLayoutConstraint? = nil
     var iconHeightConstraint: NSLayoutConstraint? = nil
     var item: ItemModel? = nil
@@ -47,8 +51,34 @@ class IconViewCell: UICollectionViewCell, ItemView {
     }
     
     override init(frame: CGRect) {
-        iconHeight = frame.height * iconCellFillRatio
         super.init(frame: frame)
+        configure()
+    }
+    
+    func updateUIWithItem(_ item: ItemModel) {
+        self.item = item
+        nameLabel.text = item.name
+        var iconImage: UIImage? = nil
+        switch item.type {
+        case .file:
+            iconImage = UIImage(systemName: "doc.richtext")!
+        case .directory:
+            iconImage = UIImage(systemName: "folder")!
+        }
+        iconImage.map { setIconImage($0) }
+    }
+    
+    func updateWith(_ item: Item) {
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension IconViewCell {
+    func configure() {
+        iconHeight = frame.height * iconCellFillRatio
         self.backgroundView = {
             let v = UIView()
             v.fillSuperview()
@@ -85,22 +115,5 @@ class IconViewCell: UICollectionViewCell, ItemView {
         
         stackView.fillSuperview(padding: .init(top: 8, left: 8, bottom: 8, right: 8))
         UIImage(named: "placeholder").map{ setIconImage($0) }
-    }
-    
-    func updateUIWithItem(_ item: ItemModel) {
-        self.item = item
-        nameLabel.text = item.name
-        var iconImage: UIImage? = nil
-        switch item.type {
-        case .file:
-            iconImage = UIImage(systemName: "doc.richtext")!
-        case .directory:
-            iconImage = UIImage(systemName: "folder")!
-        }
-        iconImage.map { setIconImage($0) }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -8,7 +8,6 @@
 import UIKit
 
 class ListViewCell: UICollectionViewCell, ItemView {
-
     let iconCellFillRatio: CGFloat = 0.7
     
     var item: ItemModel? = nil
@@ -133,6 +132,9 @@ class ListViewCell: UICollectionViewCell, ItemView {
             buttonTransition.isHidden = false
         }
         iconImage.map { setIconImage($0) }
+    }
+    
+    func updateWith(_ item: Item) {
     }
     
 }

@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Foundation
 
 struct StyleInfo {
     let cellId: String
@@ -14,12 +13,36 @@ struct StyleInfo {
     let nextIconImage: UIImage
 }
 
+
 class FolderViewController: BaseListController,
                             UICollectionViewDelegateFlowLayout
 {
-    let sheetService = SheetService()
-    var directory: Directory? = nil
-    var appState: AppState
+    
+    var folder: Folder = Store.shared.rootFolder {
+        didSet {
+            collectionView.reloadData()
+            if folder === folder.store?.rootFolder {
+                title = .fileExpert
+            } else {
+                title = folder.name
+            }
+        }
+    }
+    
+    override init() {
+        super.init()
+    }
+    
+    convenience init(folder: Folder) {
+        self.init()
+        self.folder = folder
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    var appState: AppState = AppState(style: .icons)
     
     let info: [DirectoryViewStyle: StyleInfo] = [
         DirectoryViewStyle.icons : StyleInfo(
@@ -32,6 +55,215 @@ class FolderViewController: BaseListController,
             flow: ListFlowLayout(),
             nextIconImage: UIImage(systemName: "square.grid.3x2.fill")!.imageWith(newSize: CGSize.init(width: 24, height: 16))
         )]
+    
+    func getCellId(for ownStyle: DirectoryViewStyle) -> String {
+        return info[ownStyle]!.cellId
+    }
+    
+    func getCellId() -> String {
+        return getCellId(for: appState.style)
+    }
+    
+    func getFlow() -> UICollectionViewDelegateFlowLayout  {
+        return info[appState.style]!.flow
+    }
+    
+    func getNextImageIcon() -> UIImage {
+        return info[appState.style]!.nextIconImage
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupUI()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleChangeNotification(_:)),
+            name: Store.changeNotification,
+            object: nil)
+        
+        Store.shared.load()
+    }
+    
+    func setupUI() {
+        setupCollectionView()
+    }
+    
+    func setupCollectionView() {
+        collectionView.register(
+            IconViewCell.self,
+            forCellWithReuseIdentifier: getCellId(for: DirectoryViewStyle.icons))
+        collectionView.register(
+            ListViewCell.self,
+            forCellWithReuseIdentifier: getCellId(for: DirectoryViewStyle.list))
+        collectionView.backgroundColor = .white
+        
+        if let flowLayout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
+            if #available(iOS 11.0, *) {
+                flowLayout.sectionInsetReference = .fromSafeArea
+            }
+        }
+    }
+    
+    @objc func handleChangeNotification(_ notification: Notification) {
+        // Handle change to the current folder
+        if let item = notification.object as? Folder,
+           item === folder {
+            let reason = notification.userInfo?[Item.changeReasonKey] as? String
+            if reason == Item.removed {
+            }
+        }
+        
+        // Handle changes of current folder
+        guard let userInfo = notification.userInfo,
+              userInfo[Item.parentFolderKey] as? Folder === folder
+        else {
+            return
+        }
+        
+        if let changeReason = userInfo[Item.changeReasonKey] as? String {
+            let newValue = userInfo[Item.newValueKey]
+            let oldValue = userInfo[Item.oldValueKey]
+            switch (changeReason, newValue, oldValue) {
+            case let (Item.added, (newIndex as Int)?, _):
+                
+                DispatchQueue.main.async { [weak self] in
+                    if self?.folder.contents.count == 1 {
+                        self?.collectionView.reloadData()
+                        return
+                    }
+                    
+                    self?.collectionView.insertItems(at: [IndexPath(row: newIndex, section: 0)])
+                }
+            default:
+                collectionView.reloadData()
+            }
+        }
+    }
+    
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) as? ItemView {
+            cell.highlight()
+        }
+        /*
+        if let newDir = directory?.directory(at: indexPath.item) {
+            let childVC = FolderViewController(appState: self.appState)
+            childVC.directory = newDir
+            navigationController?.modalPresentationStyle = .fullScreen
+            navigationController?.pushViewController(childVC, animated: true)
+        }
+        */
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) as? ItemView {
+            cell.unhighlight()
+        }
+    }
+    
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cellId = getCellId()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as? ItemView else {
+            return UICollectionViewCell()
+        }
+        
+        cell.updateWith(folder.contents[indexPath.item])
+        return cell
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return folder.contents.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        /*
+        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
+            cell.highlight()
+        }
+ */
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        /*
+        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
+            cell.unhighlight()
+        }
+ */
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        guard let size = getFlow().collectionView?(
+                collectionView,
+                layout: collectionViewLayout,
+                sizeForItemAt: indexPath
+        ) else {
+            return CGSize.zero
+        }
+        return size
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        guard let insets = getFlow().collectionView?(
+                collectionView,
+                layout: collectionViewLayout,
+                insetForSectionAt: section
+        ) else {
+            return UIEdgeInsets.zero
+        }
+        return insets
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        guard let spacing = getFlow().collectionView?(
+                collectionView,
+                layout: collectionViewLayout,
+                minimumLineSpacingForSectionAt: section
+        ) else {
+            return CGFloat.zero
+        }
+        return spacing
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        guard let spacing = getFlow().collectionView?(
+                collectionView,
+                layout: collectionViewLayout,
+                minimumInteritemSpacingForSectionAt: section
+        ) else {
+            return CGFloat.zero
+        }
+        return spacing
+    }
+ 
+    
+    
+    
+    /*
+    
+    let sheetService = SheetService()
+    var directory: Directory? = nil
+    
     
     func getCellId(for ownStyle: DirectoryViewStyle) -> String {
         return info[ownStyle]!.cellId
@@ -177,112 +409,14 @@ class FolderViewController: BaseListController,
         }
     }
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath) as? ItemView {
-            cell.highlight()
-        }
-        if let newDir = directory?.directory(at: indexPath.item) {
-            let childVC = FolderViewController(appState: self.appState)
-            childVC.directory = newDir
-            navigationController?.modalPresentationStyle = .fullScreen
-            navigationController?.pushViewController(childVC, animated: true)
-        }
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath) as? ItemView {
-            cell.unhighlight()
-        }
-    }
-    
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let cellId = getCellId()
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ItemView
-        directory
-            .flatMap({ $0.item(at: indexPath.item) })
-            .map({ cell.updateUIWithItem($0) })
-        return cell
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.directory?.itemsCount() ?? 0
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
-            cell.highlight()
-        }
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath) as? IconViewCell {
-            cell.unhighlight()
-        }
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        guard let size = getFlow().collectionView?(
-                collectionView,
-                layout: collectionViewLayout,
-                sizeForItemAt: indexPath
-        ) else {
-            return CGSize.zero
-        }
-        return size
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int
-    ) -> UIEdgeInsets {
-        guard let insets = getFlow().collectionView?(
-                collectionView,
-                layout: collectionViewLayout,
-                insetForSectionAt: section
-        ) else {
-            return UIEdgeInsets.zero
-        }
-        return insets
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt section: Int
-    ) -> CGFloat {
-        guard let spacing = getFlow().collectionView?(
-                collectionView,
-                layout: collectionViewLayout,
-                minimumLineSpacingForSectionAt: section
-        ) else {
-            return CGFloat.zero
-        }
-        return spacing
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int
-    ) -> CGFloat {
-        guard let spacing = getFlow().collectionView?(
-                collectionView,
-                layout: collectionViewLayout,
-                minimumInteritemSpacingForSectionAt: section
-        ) else {
-            return CGFloat.zero
-        }
-        return spacing
-    }
+  
+ */
     
 
     
+}
+
+
+fileprivate extension String {
+    static let fileExpert = NSLocalizedString("File Expert", comment: "Heading for the list of files and Folders")
 }

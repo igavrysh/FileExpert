@@ -10,7 +10,7 @@ import UIKit
 class MainViewController: UINavigationController {
     
     init() {
-        super.init(rootViewController: FolderViewController(appState: AppState.shared))
+        super.init(rootViewController: DirectoryViewController())
     }
     
     override func viewDidLoad() {

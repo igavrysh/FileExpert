@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Item: Equatable {
+class Item: Hashable {
 
     let id: String
     
@@ -56,6 +56,10 @@ class Item: Equatable {
             return nil
         }
         return self
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     
     static func == (lhs: Item, rhs: Item) -> Bool {

@@ -39,6 +39,7 @@
 		D59FA964266591CD00E1BE54 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA963266591CD00E1BE54 /* Store.swift */; };
 		D59FA9692665927600E1BE54 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA9682665927600E1BE54 /* Folder.swift */; };
 		D59FA96E26659B8C00E1BE54 /* FileNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA96D26659B8C00E1BE54 /* FileNew.swift */; };
+		D59FA97826661FF800E1BE54 /* DirectoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA97726661FF700E1BE54 /* DirectoryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 		D59FA963266591CD00E1BE54 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		D59FA9682665927600E1BE54 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		D59FA96D26659B8C00E1BE54 /* FileNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNew.swift; sourceTree = "<group>"; };
+		D59FA97726661FF700E1BE54 /* DirectoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryViewController.swift; sourceTree = "<group>"; };
 		E00EAF6EFF30B676012C6E4C /* Pods_FileExpertTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FileExpertTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -245,6 +247,7 @@
 				D53A758A2661BCB00050D67C /* MainViewController.swift */,
 				D59FA93A266233ED00E1BE54 /* IconsFlowLayout.swift */,
 				D59FA93F2662466300E1BE54 /* ListFlowLayout.swift */,
+				D59FA97726661FF700E1BE54 /* DirectoryViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -558,6 +561,7 @@
 				D59FA9692665927600E1BE54 /* Folder.swift in Sources */,
 				D59FA9402662466300E1BE54 /* ListFlowLayout.swift in Sources */,
 				D59FA93B266233ED00E1BE54 /* IconsFlowLayout.swift in Sources */,
+				D59FA97826661FF800E1BE54 /* DirectoryViewController.swift in Sources */,
 				D53A752626609B080050D67C /* BaseListController.swift in Sources */,
 				D59FA9452662B37200E1BE54 /* AppState.swift in Sources */,
 				D53A758B2661BCB10050D67C /* MainViewController.swift in Sources */,

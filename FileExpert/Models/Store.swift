@@ -20,6 +20,18 @@ class Store {
         self.rootFolder.store = self
     }
     
+    func load() {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let rootFolder = self?.rootFolder else { return }
+            rootFolder.add(FileNew(name: "file1.txt", id: UUID().uuidString))
+            rootFolder.add(FileNew(name: "file2.txt", id: UUID().uuidString))
+            rootFolder.add(Folder(name: "directory1", id: UUID().uuidString))
+            rootFolder.add(Folder(name: "directory2", id: UUID().uuidString))
+            rootFolder.add(Folder(name: "directory3", id: UUID().uuidString))
+        }
+        
+    }
+    
     func save(_ notifying: Item, userInfo: [AnyHashable: Any]) {
         NotificationCenter.default.post(name: Store.changeNotification, object: notifying, userInfo: userInfo)
     }
