@@ -117,24 +117,16 @@ extension DirectoryViewController {
             let contentSize = layoutEnvironment.container.effectiveContentSize
             let padding: CGFloat = 5
             let columns: CGFloat = (contentSize.width / (self.iconSize + padding * 2)).rounded(.down)
-            /*
-            if contentSize.width > 600 {
-                columns = 4
-            }
-            if contentSize.width > 1000 {
-                columns = 5
-            }*/
-    
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0 / columns),
                                                   heightDimension: .fractionalHeight(1.0))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
+            item.contentInsets = NSDirectionalEdgeInsets(top: padding, leading: padding, bottom: padding, trailing: padding)
             let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                                    heightDimension: .fractionalWidth(1.0 / columns))
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
             let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
+            section.contentInsets = NSDirectionalEdgeInsets(top: padding, leading: padding, bottom: padding, trailing: padding)
 
             return section
         }

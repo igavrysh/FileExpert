@@ -24,6 +24,8 @@ class Store {
     
     func load() {
         DispatchQueue.global(qos: .background).async { [weak self] in
+            self?.rootFolder.add(Folder(name: "abc", id: "abc"))
+            /*
             self?.sheetService.fetchSheet { [weak self] (sheet, error) in
                 if error != nil {
                     return
@@ -31,8 +33,8 @@ class Store {
                 if let sheet = sheet {
                     self?.loadDirectoryFromSheet(sheet)
                 }
-                
             }
+            */
         }
         
     }
