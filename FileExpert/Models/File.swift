@@ -75,46 +75,4 @@ class Directory {
     }
 }
 
-fileprivate class Container {
-    var records: [SheetRecord]
-    
-    init(_ records: [SheetRecord]) {
-        self.records = records
-    }
-}
-
-func dirFromSheet(_ sheet: Sheet) -> Directory? {
-    var sheetsByParentId = [String: Container]();
-    for row in sheet.rows {
-        if let c = sheetsByParentId[row.parentId] {
-            c.records.append(row)
-        } else {
-            sheetsByParentId[row.parentId] = Container([row])
-        }
-    }
-    
-    var dirs = [String: Directory]()
-    var queue = [SheetRecord(id: "", parentId: "", type: "d", name: "")]
-    while !queue.isEmpty {
-        let row = queue.remove(at: 0)
-        if row.type == "f" {
-            if let parentDir = dirs[row.parentId] {
-                parentDir.files.append(File(id: row.id, name: row.name, directory: parentDir))
-            }
-        }
-        if row.type == "d" {
-            let parentDir = dirs[row.parentId]
-            let cDir = Directory(id: row.id, name: row.name, subdirs: [], files: [], parent: parentDir)
-            if let parentDir = parentDir {
-                parentDir.subdirs.append(cDir)
-            }
-            dirs[row.id] = cDir
-            if let children = sheetsByParentId[row.id] {
-                queue.append(contentsOf: children.records)
-            }
-        }
-    }
-    return dirs[""]
-}
-
-
+ 

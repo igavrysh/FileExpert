@@ -22,7 +22,7 @@ class FileSystemApi {
                     completion(error)
                 }
                 if let sheet = sheet {
-                    self?.rootDirectory = dirFromSheet(sheet)
+                    //self?.rootDirectory = dirFromSheet(sheet)
                     DispatchQueue.main.async {
                         completion(nil)
                     }

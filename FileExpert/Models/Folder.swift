@@ -29,7 +29,7 @@ class Folder: Item {
         super.deleted()
     }
     
-    func add(_ item: Item) {
+    func add(_ item: Item) -> Item {
         assert(contents.contains { $0 == item } == false)
         contents.append(item)
         contents.sort(by: { $0.name < $1.name })
@@ -40,6 +40,7 @@ class Folder: Item {
             Item.newValueKey: newIndex,
             Item.parentFolderKey: self
         ])
+        return item
     }
     
     func reSort(changedItem: Item) -> (oldIndex: Int, newIndex: Int) {
