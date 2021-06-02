@@ -8,8 +8,13 @@
 import Foundation
 
 class Folder: Item {
-    
     private(set) var contents: [Item]
+    
+    enum SortType {
+        case nameAsc, directoryFileNameAsc
+    }
+    
+    private var sortType: SortType
     
     override weak var store: Store? {
         didSet {
@@ -19,6 +24,13 @@ class Folder: Item {
     
     override init(name: String, id: String) {
         contents = []
+        sortType = .directoryFileNameAsc
+        super.init(name: name, id: id)
+    }
+    
+    init(name: String, id: String, sortType: SortType) {
+        contents = []
+        self.sortType = sortType
         super.init(name: name, id: id)
     }
     
@@ -32,7 +44,7 @@ class Folder: Item {
     func add(_ item: Item) -> Item {
         assert(contents.contains { $0 == item } == false)
         contents.append(item)
-        contents.sort(by: { $0.name < $1.name })
+        sortStrategies[sortType].map { contents.sort(by: $0)}
         let newIndex = contents.firstIndex { $0 == item }!
         item.parent = self
         store?.save(item, userInfo: [
@@ -45,7 +57,7 @@ class Folder: Item {
     
     func reSort(changedItem: Item) -> (oldIndex: Int, newIndex: Int) {
         let oldIndex = contents.firstIndex { $0 == changedItem }!
-        contents.sort(by: { $0.name < $1.name })
+        sortStrategies[sortType].map { contents.sort(by: $0)}
         let newIndex = contents.firstIndex { $0 == changedItem }!
         return (oldIndex, newIndex)
     }
@@ -70,4 +82,22 @@ class Folder: Item {
             .first { $0.id == second }
             .flatMap { $0.item(atIdPath: subseq) }
     }
+    
+    var sortStrategies: [SortType: ((_: Item, _: Item) -> Bool)] = [
+        .nameAsc: { $0.name < $1.name },
+        .directoryFileNameAsc: { (item1, item2) -> Bool in
+            if (item1 is Folder && item2 is Folder)
+                || (item1 is FileNew && item2 is FileNew) {
+                return item1.name < item2.name
+            } else {
+                if item1 is FileNew && item2 is Folder {
+                    return false
+                } else if item1 is Folder && item2 is FileNew {
+                    return true
+                }
+                fatalError("Unexpect file and directory configuration found when trying to sort items")
+            }
+        }
+    ]
 }
+
