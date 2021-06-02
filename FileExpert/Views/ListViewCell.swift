@@ -134,7 +134,7 @@ class ListViewCell: UICollectionViewCell, ItemView {
         iconImage.map { setIconImage($0) }
     }
     
-    func updateWith(_ item: Item) {
+    func updateWithItem(_ item: Item) {
     }
     
 }

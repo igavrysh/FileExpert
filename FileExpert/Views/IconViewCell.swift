@@ -11,9 +11,9 @@ class IconViewCell: UICollectionViewCell, ItemView {
    
     static let reuseIdentifier = "icon-view-cell-reuse-identifier"
     
-    let iconCellFillRatio: CGFloat = 0.6
+    let iconCellFillRatio: CGFloat = 0.60
     let iconView = UIImageView()
-    var iconHeight: CGFloat = 0
+    var iconSize: CGFloat = 0
     var iconWidthConstraint: NSLayoutConstraint? = nil
     var iconHeightConstraint: NSLayoutConstraint? = nil
     var item: Item? = nil
@@ -28,16 +28,16 @@ class IconViewCell: UICollectionViewCell, ItemView {
     func setIconImage(_ image: UIImage) {
         let ratio = image.size.width / image.size.height
         self.iconView.image = image
-        self.iconWidthConstraint.map { $0.constant = iconHeight }
-        self.iconWidthConstraint.map { $0.constant = ratio * iconHeight }
+        self.iconWidthConstraint.map { $0.constant = iconSize }
+        self.iconWidthConstraint.map { $0.constant = ratio * iconSize }
     }
     
     func highlight() {
         self.backgroundView.map{
             $0.layer.backgroundColor = UIColor.init(
                 red: 0,
-                green: 111.0/255.0,
-                blue: 247.0/255.0,
+                green: 111.0 / 255.0,
+                blue: 247.0 / 255.0,
                 alpha: 0.2).cgColor
         }
     }
@@ -50,24 +50,13 @@ class IconViewCell: UICollectionViewCell, ItemView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configure()
+        configureHierarchy()
     }
     
     func updateUIWithItem(_ item: ItemModel) {
-        /*
-        self.item = item
-        nameLabel.text = item.name
-        var iconImage: UIImage? = nil
-        switch item.type {
-        case .file:
-        case .directory:
-            
-        }
-        iconImage.map { setIconImage($0) }
-        */
     }
     
-    func updateWith(_ item: Item) {
+    func updateWithItem(_ item: Item) {
         self.item = item
         nameLabel.text = item.name
         var iconImage: UIImage? = nil
@@ -85,8 +74,8 @@ class IconViewCell: UICollectionViewCell, ItemView {
 }
 
 extension IconViewCell {
-    func configure() {
-        iconHeight = frame.height * iconCellFillRatio
+    func configureHierarchy() {
+        iconSize = frame.width * iconCellFillRatio
         self.backgroundView = {
             let v = UIView()
             v.fillSuperview()
@@ -99,29 +88,31 @@ extension IconViewCell {
             return v
         }()
         
-        let textHeight = frame.height * (1 - iconCellFillRatio) / 4
+        // remainig size after icon size is taken into consideration
+        let remainingSize = frame.height * (1 - iconCellFillRatio)
+        // H:|padding-[imageview]-padding-[label]-padding|
+        let padding = remainingSize * 0.4 / 3
+        // divide by 2 cos max two lines are allowed in item name label
+        let textHeight = remainingSize * 0.6 / 2
         let fontSize = self.nameLabel.fontSizeToFitSize(CGSize(width: frame.width, height: textHeight))
         nameLabel.font = .systemFont(ofSize: fontSize)
         nameLabel.text = "placeholder"
         
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconHeightConstraint = self.iconView.constrainHeight(constant: iconHeight)
-        iconWidthConstraint = self.iconView.constrainWidth(constant: iconHeight)
+        self.addSubview(iconView)
+        self.addSubview(nameLabel)
         
-        let dummyView = UIView()
-        dummyView.translatesAutoresizingMaskIntoConstraints = false
-        _ = dummyView.constrainHeight(constant: 0)
-        _ = dummyView.constrainWidth(constant: 0)
+        iconHeightConstraint = self.iconView.constrainHeight(constant: iconSize)
+        iconWidthConstraint = self.iconView.constrainWidth(constant: iconSize)
         
-        let stackView = UIStackView(arrangedSubviews: [dummyView, iconView, nameLabel, dummyView])
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .equalSpacing
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stackView)
-        
-        stackView.fillSuperview(padding: .init(top: 8, left: 8, bottom: 8, right: 8))
+        iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        iconView.topAnchor.constraint(equalTo: self.topAnchor, constant: padding).isActive = true
+        nameLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        nameLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: padding).isActive = true
+        nameLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: padding).isActive = true
+        nameLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -padding).isActive = true
+    
         UIImage(named: "placeholder").map{ setIconImage($0) }
     }
 }

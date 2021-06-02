@@ -9,6 +9,8 @@ import UIKit
 
 class DirectoryViewController: UIViewController {
     
+    let iconSize: CGFloat = 100
+    
     var folder: Folder = Store.shared.rootFolder {
         didSet {
             directoryCollectionView.reloadData()
@@ -72,17 +74,23 @@ extension DirectoryViewController {
 extension DirectoryViewController {
     func configureDataSource() {
         let cellRegistration = UICollectionView.CellRegistration<IconViewCell, Item> { (cell, indexPath, item) in
-            cell.updateWith(item)
+            cell.updateWithItem(item)
         }
+        
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: directoryCollectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
+        
+        //var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        //snapshot.appendSections([.main])
+        //snapshot.appendItems([])
+        //dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
 
 extension DirectoryViewController {
-    
+        
     func createListLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -107,13 +115,15 @@ extension DirectoryViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int,
             layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
             let contentSize = layoutEnvironment.container.effectiveContentSize
-            var columns: CGFloat = 3
+            let padding: CGFloat = 5
+            let columns: CGFloat = (contentSize.width / (self.iconSize + padding * 2)).rounded(.down)
+            /*
             if contentSize.width > 600 {
                 columns = 4
             }
             if contentSize.width > 1000 {
                 columns = 5
-            }
+            }*/
     
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0 / columns),
                                                   heightDimension: .fractionalHeight(1.0))

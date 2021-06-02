@@ -15,6 +15,6 @@ protocol ItemView: UICollectionViewCell {
     
     func updateUIWithItem(_ item: ItemModel)
     
-    func updateWith(_ item: Item)
+    func updateWithItem(_ item: Item)
     
 }

@@ -172,7 +172,7 @@ class FolderViewController: BaseListController,
             return UICollectionViewCell()
         }
         
-        cell.updateWith(folder.contents[indexPath.item])
+        cell.updateWithItem(folder.contents[indexPath.item])
         return cell
     }
     
