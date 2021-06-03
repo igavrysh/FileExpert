@@ -98,25 +98,41 @@ extension DirectoryViewController {
         
         if notification.object is AppState {
             toggleButton.image = getAppStateIconImage()
+            directoryCollectionView.setCollectionViewLayout(getLayout(), animated: true)
         }
     }
 }
 
 extension DirectoryViewController {
     func configureDataSource() {
-        let cellRegistration = UICollectionView.CellRegistration<IconViewCell, Item> { (cell, indexPath, item) in
-            cell.updateWithItem(item)
-        }
+        let iconViewCellRegistration = createIconViewCellRegistration()
+        let listViewCellRegistration = createListViewCellRegistration()
         
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: directoryCollectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
-            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
+            switch AppState.shared.style {
+            case .icons:
+                return collectionView.dequeueConfiguredReusableCell(using: iconViewCellRegistration, for: indexPath, item: identifier)
+            case .list:
+                return collectionView.dequeueConfiguredReusableCell(using: listViewCellRegistration, for: indexPath, item: identifier)
+            }
         }
-        
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
         snapshot.appendItems(folder.contents)
         dataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
+    func createIconViewCellRegistration() ->  UICollectionView.CellRegistration<IconViewCell, Item> {
+        return UICollectionView.CellRegistration<IconViewCell, Item>{ (cell, indexPath, item) in
+            cell.updateWithItem(item)
+        }
+    }
+    
+    func createListViewCellRegistration() ->  UICollectionView.CellRegistration<ListViewCell, Item> {
+        return UICollectionView.CellRegistration<ListViewCell, Item>{ (cell, indexPath, item) in
+            cell.updateWithItem(item)
+        }
     }
 }
 
@@ -196,10 +212,20 @@ extension DirectoryViewController {
         return layout
     }
     
+    func getLayout() -> UICollectionViewLayout {
+        var layout: UICollectionViewLayout!
+        switch AppState.shared.style {
+        case .icons:
+            layout = createGridLayout()
+        default:
+            layout = createListLayout()
+        }
+        return layout
+    }
+    
     func configureHierarchy() {
         view.backgroundColor = .systemBackground
-        let layout = createGridLayout()
-        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: getLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
@@ -217,14 +243,14 @@ extension DirectoryViewController {
             b.image = image
             return b
         }
-        self.toggleButton = genButtonWithImage(getAppStateIconImage())
-        self.addFileButton = genButtonWithImage(UIImage(systemName: "doc.badge.plus")!)
-        self.addDirectoryButton = genButtonWithImage(UIImage(systemName: "plus.rectangle.on.folder")!)
-        self.userButton = genButtonWithImage(UIImage(systemName: "person")!)
-        self.navigationItem.rightBarButtonItems = [self.toggleButton, self.addDirectoryButton, self.addFileButton]
+        toggleButton = genButtonWithImage(getAppStateIconImage())
+        addFileButton = genButtonWithImage(DirectoryViewController.addFileIcon)
+        addDirectoryButton = genButtonWithImage(DirectoryViewController.addDirectoryIcon)
+        userButton = genButtonWithImage(DirectoryViewController.userIcon)
+        navigationItem.rightBarButtonItems = [toggleButton, addDirectoryButton, addFileButton]
         
         if folder.isRoot == true {
-            self.navigationItem.leftBarButtonItem = userButton
+            navigationItem.leftBarButtonItem = userButton
         }
     }
     
@@ -258,5 +284,11 @@ extension DirectoryViewController {
         .icons: UIImage(systemName: "square.grid.3x2.fill")!,
         .list: UIImage(systemName: "text.justify")!
     ]
+    
+    static let addFileIcon = UIImage(systemName: "doc.badge.plus")!
+    
+    static let addDirectoryIcon = UIImage(systemName: "plus.rectangle.on.folder")!
+    
+    static let userIcon = UIImage(systemName: "person")!
 }
 

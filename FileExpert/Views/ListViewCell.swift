@@ -48,7 +48,7 @@ class ListViewCell: UICollectionViewCell, ItemView {
         self.backgroundView = {
             let v = UIView()
             v.fillSuperview()
-            v.backgroundColor = .white
+            v.backgroundColor = .red
             v.layer.shouldRasterize = true
             self.addSubview(v)
             return v
