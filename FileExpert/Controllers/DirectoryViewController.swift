@@ -11,16 +11,18 @@ class DirectoryViewController: UIViewController {
     
     let iconSize: CGFloat = 100
     
-    var folder: Folder = Store.shared.rootFolder {
+    var titleText: String = .fileExpert {
         didSet {
-            //directoryCollectionView.reloadData()
-            if folder === folder.store?.rootFolder {
-                title = .fileExpert
-            } else {
-                title = folder.name
-            }
+            title = titleText
         }
     }
+    
+    let folder: Folder
+    
+    var toggleButton: UIBarButtonItem!
+    var userButton: UIBarButtonItem!
+    var addFileButton: UIBarButtonItem!
+    var addDirectoryButton: UIBarButtonItem!
     
     enum Section: CaseIterable {
         case main
@@ -29,16 +31,14 @@ class DirectoryViewController: UIViewController {
     var directoryCollectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     
-    init() {
-        folder = Store.shared.rootFolder
-        super.init(nibName: nil, bundle: nil)
+    convenience init() {
+        self.init(folder: Store.shared.rootFolder)
     }
     
-    convenience init(folder: Folder) {
-        self.init()
+    init(folder: Folder) {
         self.folder = folder
+        super.init(nibName: nil, bundle: nil)
     }
-
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -46,10 +46,20 @@ class DirectoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = titleText
         configureHierarchy()
         configureDataSource()
         configureObserver()
         Store.shared.load()
+    }
+}
+
+extension DirectoryViewController {
+    
+    @objc func onToolbarButtonTap(_ sender: NSObject) {
+        if sender == self.toggleButton {
+            AppState.shared.toggleNextStyle()
+        }
     }
 }
 
@@ -63,26 +73,32 @@ extension DirectoryViewController {
     }
     
     @objc func handleChangeNotification(_ notification: Notification) {
-        // Handle change to the current folder
-        if let item = notification.object as? Folder,
-           item === folder {
-            let reason = notification.userInfo?[Item.changeReasonKey] as? String
-            if reason == Item.removed {
+        if notification.object is Item {
+            // Handle change to the current folder
+            if let item = notification.object as? Folder,
+               item === folder {
+                let reason = notification.userInfo?[Item.changeReasonKey] as? String
+                if reason == Item.removed {
+                }
             }
+            
+            // Handle changes of current folder
+            guard let userInfo = notification.userInfo,
+                  userInfo[Item.parentFolderKey] as? Folder === folder
+            else {
+                return
+            }
+            
+            let items = folder.contents
+            var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+            snapshot.appendSections([.main])
+            snapshot.appendItems(items)
+            dataSource.apply(snapshot, animatingDifferences: true)
         }
         
-        // Handle changes of current folder
-        guard let userInfo = notification.userInfo,
-              userInfo[Item.parentFolderKey] as? Folder === folder
-        else {
-            return
+        if notification.object is AppState {
+            toggleButton.image = getAppStateIconImage()
         }
-        
-        let items = folder.contents
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(items)
-        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
@@ -100,7 +116,7 @@ extension DirectoryViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
         snapshot.appendItems(folder.contents)
-        dataSource.apply(snapshot, animatingDifferences: false)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
@@ -189,6 +205,31 @@ extension DirectoryViewController {
         view.addSubview(collectionView)
         collectionView.delegate = self
         self.directoryCollectionView = collectionView
+        setupToolbar()
+    }
+    
+    func setupToolbar() {
+        let genButtonWithImage = {[weak self] (image: UIImage) -> UIBarButtonItem in
+            let b = UIBarButtonItem()
+            b.style = .plain
+            b.target = self
+            b.action = #selector(self?.onToolbarButtonTap(_:))
+            b.image = image
+            return b
+        }
+        self.toggleButton = genButtonWithImage(getAppStateIconImage())
+        self.addFileButton = genButtonWithImage(UIImage(systemName: "doc.badge.plus")!)
+        self.addDirectoryButton = genButtonWithImage(UIImage(systemName: "plus.rectangle.on.folder")!)
+        self.userButton = genButtonWithImage(UIImage(systemName: "person")!)
+        self.navigationItem.rightBarButtonItems = [self.toggleButton, self.addDirectoryButton, self.addFileButton]
+        
+        if folder.isRoot == true {
+            self.navigationItem.leftBarButtonItem = userButton
+        }
+    }
+    
+    func getAppStateIconImage() -> UIImage {
+        return DirectoryViewController.appStateIcons[AppState.shared.style]!
     }
 }
 
@@ -201,8 +242,7 @@ extension DirectoryViewController: UICollectionViewDelegate {
         }
         
         if let folder = item as? Folder {
-            let vc = DirectoryViewController()
-            vc.folder = folder
+            let vc = DirectoryViewController(folder: folder)
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
@@ -212,3 +252,11 @@ extension DirectoryViewController: UICollectionViewDelegate {
 fileprivate extension String {
     static let fileExpert = NSLocalizedString("File Expert", comment: "Heading for the list of files and Folders")
 }
+
+extension DirectoryViewController {
+    static let appStateIcons: [DirectoryViewStyle: UIImage] = [
+        .icons: UIImage(systemName: "square.grid.3x2.fill")!,
+        .list: UIImage(systemName: "text.justify")!
+    ]
+}
+

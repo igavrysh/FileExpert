@@ -30,14 +30,12 @@ class Item: Hashable {
     func setName(_ newName: String) {
         name = newName
         if let p = parent {
-            let (oldeIndex, newIndex) = p.reSort(changedItem: self)
-            store?.save(
-                self,
-                userInfo: [
-                    Item.changeReasonKey: Item.renamed,
-                    Item.oldValueKey: oldeIndex,
-                    Item.newValueKey: newIndex,
-                    Item.parentFolderKey: p])
+            let (oldIndex, newIndex) = p.reSort(changedItem: self)
+            store?.save(self, userInfo: [
+                            Item.changeReasonKey: Item.renamed,
+                            Item.oldValueKey: oldIndex,
+                            Item.newValueKey: newIndex,
+                            Item.parentFolderKey: p])
         }
     }
     

@@ -14,6 +14,8 @@ enum DirectoryViewStyle {
 
 class AppState {
     
+    static let changeNotification = Notification.Name("AppStateChanged")
+    
     static let shared = AppState(style: .icons)
     
     private var styleInternal: DirectoryViewStyle
@@ -23,7 +25,11 @@ class AppState {
     }
     
     func toggleNextStyle() {
+        let prevStyle = self.style
         self.styleInternal = getNextStyle()
+        NotificationCenter.default.post(name: Store.changeNotification, object: self, userInfo: [
+                                            AppState.previousStyle: prevStyle,
+                                            AppState.style: self.style])
     }
     
     func getNextStyle() -> DirectoryViewStyle {
@@ -38,5 +44,10 @@ class AppState {
     init(style: DirectoryViewStyle) {
         self.styleInternal = style
     }
-    
 }
+
+extension AppState {
+    static let previousStyle = "previousStyle"
+    static let style = "style"
+}
+

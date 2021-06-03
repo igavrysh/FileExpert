@@ -107,7 +107,6 @@ class Store {
             }
         }
     }
-    
 }
 
 fileprivate extension String {

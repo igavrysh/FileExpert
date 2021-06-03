@@ -99,5 +99,11 @@ class Folder: Item {
             }
         }
     ]
+    
+    var isRoot: Bool {
+        get {
+            self.store?.rootFolder === self
+        }
+    }
 }
 
