@@ -127,7 +127,7 @@ extension IconViewCell {
         
         // top padding view setup
         paddingViewTop.widthAnchor.constraint(equalToConstant: 0).isActive = true
-        paddingViewTop.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: paddingToViewMul * 3).isActive = true
+        paddingViewTop.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: paddingToViewMul * 4).isActive = true
         paddingViewTop.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         paddingViewTop.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
         

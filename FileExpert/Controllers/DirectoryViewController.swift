@@ -13,7 +13,7 @@ class DirectoryViewController: UIViewController {
     
     var folder: Folder = Store.shared.rootFolder {
         didSet {
-            directoryCollectionView.reloadData()
+            //directoryCollectionView.reloadData()
             if folder === folder.store?.rootFolder {
                 title = .fileExpert
             } else {
@@ -28,6 +28,21 @@ class DirectoryViewController: UIViewController {
     
     var directoryCollectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    
+    init() {
+        folder = Store.shared.rootFolder
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    convenience init(folder: Folder) {
+        self.init()
+        self.folder = folder
+    }
+
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,10 +97,10 @@ extension DirectoryViewController {
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
         
-        //var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        //snapshot.appendSections([.main])
-        //snapshot.appendItems([])
-        //dataSource.apply(snapshot, animatingDifferences: false)
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(folder.contents)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
 
@@ -172,7 +187,25 @@ extension DirectoryViewController {
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
+        collectionView.delegate = self
         self.directoryCollectionView = collectionView
+    }
+}
+
+extension DirectoryViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = self.dataSource.itemIdentifier(for: indexPath) else {
+            collectionView.deselectItem(at: indexPath, animated: true)
+            return
+        }
+        
+        if let folder = item as? Folder {
+            let vc = DirectoryViewController()
+            vc.folder = folder
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
     }
 }
 
