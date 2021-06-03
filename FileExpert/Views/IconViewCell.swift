@@ -120,23 +120,27 @@ extension IconViewCell {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         iconView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.addSubview(paddingViewTop)
+        // self.addSubview(paddingViewTop)
         self.addSubview(iconView)
-        self.addSubview(paddingViewMiddle)
-        self.addSubview(nameLabel)
+        //self.addSubview(paddingViewMiddle)
+        //self.addSubview(nameLabel)
         
         // top padding view setup
+        /*
         paddingViewTop.widthAnchor.constraint(equalToConstant: 0).isActive = true
         paddingViewTop.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: paddingToViewMul * 4).isActive = true
         paddingViewTop.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         paddingViewTop.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        
+        */
         // icon View constraints
-        iconView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: self.cellFillRatioIcon).isActive = true
+        iconView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon).isActive = true
         iconView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon).isActive = true
         iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        iconView.topAnchor.constraint(equalTo: paddingViewTop.bottomAnchor, constant: 0).isActive = true
+        iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+
         
+        //iconView.topAnchor.constraint(equalTo: paddingViewTop.bottomAnchor, constant: 0).isActive = true
+        /*
         // middle padding view setup
         paddingViewMiddle.widthAnchor.constraint(equalToConstant: 0).isActive = true
         paddingViewMiddle.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: paddingToViewMul).isActive = true
@@ -147,7 +151,7 @@ extension IconViewCell {
         nameLabel.topAnchor.constraint(equalTo: paddingViewMiddle.bottomAnchor).isActive = true
         nameLabel.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1 - 2 * paddingToViewMul).isActive = true
         nameLabel.heightAnchor.constraint(lessThanOrEqualTo: self.heightAnchor, multiplier: cellFillRatioText).isActive = true
-        
+        */
         UIImage(named: "placeholder").map{ setIconImage($0) }
     }
 }

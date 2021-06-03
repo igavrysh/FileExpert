@@ -106,16 +106,10 @@ extension DirectoryViewController {
 extension DirectoryViewController {
     func configureDataSource() {
         let iconViewCellRegistration = createIconViewCellRegistration()
-        let listViewCellRegistration = createListViewCellRegistration()
         
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: directoryCollectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
-            switch AppState.shared.style {
-            case .icons:
-                return collectionView.dequeueConfiguredReusableCell(using: iconViewCellRegistration, for: indexPath, item: identifier)
-            case .list:
-                return collectionView.dequeueConfiguredReusableCell(using: listViewCellRegistration, for: indexPath, item: identifier)
-            }
+            return collectionView.dequeueConfiguredReusableCell(using: iconViewCellRegistration, for: indexPath, item: identifier)
         }
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
@@ -125,12 +119,6 @@ extension DirectoryViewController {
     
     func createIconViewCellRegistration() ->  UICollectionView.CellRegistration<IconViewCell, Item> {
         return UICollectionView.CellRegistration<IconViewCell, Item>{ (cell, indexPath, item) in
-            cell.updateWithItem(item)
-        }
-    }
-    
-    func createListViewCellRegistration() ->  UICollectionView.CellRegistration<ListViewCell, Item> {
-        return UICollectionView.CellRegistration<ListViewCell, Item>{ (cell, indexPath, item) in
             cell.updateWithItem(item)
         }
     }
