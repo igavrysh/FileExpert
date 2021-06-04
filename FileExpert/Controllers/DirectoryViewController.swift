@@ -50,6 +50,7 @@ class DirectoryViewController: UIViewController {
         configureHierarchy()
         configureDataSource()
         configureObserver()
+        applySnapshot()
         Store.shared.load()
     }
 }
@@ -74,35 +75,33 @@ extension DirectoryViewController {
     
     @objc func handleChangeNotification(_ notification: Notification) {
         if notification.object is Item {
-            // Handle change to the current folder
-            if let item = notification.object as? Folder,
-               item === folder {
-                let reason = notification.userInfo?[Item.changeReasonKey] as? String
-                if reason == Item.removed {
-                }
-            }
-            
-            // Handle changes of current folder
-            guard let userInfo = notification.userInfo,
-                  userInfo[Item.parentFolderKey] as? Folder === folder
-            else {
-                return
-            }
-            
-            let items = folder.contents
-            var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-            snapshot.appendSections([.main])
-            snapshot.appendItems(items)
-            dataSource.apply(snapshot, animatingDifferences: true)
+            applySnapshot()
         }
         
         if notification.object is AppState {
+            var topIndexPath: IndexPath?
+            
+            for cell in directoryCollectionView.visibleCells {
+                guard let tip = topIndexPath else {
+                    topIndexPath = directoryCollectionView.indexPath(for: cell)
+                    continue
+                }
+                if let indexPath = directoryCollectionView.indexPath(for: cell) {
+                    if tip.item > indexPath.item {
+                        topIndexPath = indexPath
+                    }
+                }
+            }
             let selectedIndexPath = directoryCollectionView.indexPathsForSelectedItems?.first
-            var topIndexPath = directoryCollectionView.visibleCells.first.map { self.directoryCollectionView.indexPath(for: $0) }
+            selectedIndexPath.map { directoryCollectionView.deselectItem(at: $0, animated: false) }
             directoryCollectionView.setCollectionViewLayout(getLayout(), animated: true) { (finished) in
                 self.dataSource.apply(self.dataSource.snapshot(), animatingDifferences: false)
                 self.directoryCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
-                topIndexPath?.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.bottom, animated: true) }
+                
+                
+                //topIndexPath?.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.bottom, animated: true) }
+                selectedIndexPath.map {self.directoryCollectionView.selectItem(at: $0, animated: true, scrollPosition: []) }
+                topIndexPath.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.centeredVertically, animated: true) }
             }
             //
             toggleButton.image = getAppStateIconImage()
@@ -136,10 +135,6 @@ extension DirectoryViewController {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: iconViewCellRegistration, for: indexPath, item: identifier)
         }
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(folder.contents)
-        dataSource.apply(snapshot, animatingDifferences: true)
     }
     
     func createIconViewCellRegistration() ->  UICollectionView.CellRegistration<IconViewCell, Item> {
@@ -147,12 +142,19 @@ extension DirectoryViewController {
             cell.updateWithItem(item)
         }
     }
+    
+    func applySnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(folder.contents)
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
 }
 
 extension DirectoryViewController {
         
     func createListLayout() -> UICollectionViewLayout {
-   
+        /*
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0))
@@ -170,11 +172,11 @@ extension DirectoryViewController {
         let layout = UICollectionViewCompositionalLayout(section: section)
         
         return layout
-        
-        /*var config = UICollectionLayoutListConfiguration(appearance: .plain)
+        */
+         
+        var config = UICollectionLayoutListConfiguration(appearance: .plain)
         
         return UICollectionViewCompositionalLayout.list(using: config)
-        */
     }
     
     func createGridLayout() -> UICollectionViewLayout {
