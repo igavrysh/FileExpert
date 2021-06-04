@@ -174,7 +174,7 @@ extension DirectoryViewController {
         return layout
         */
          
-        var config = UICollectionLayoutListConfiguration(appearance: .plain)
+        var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
         
         return UICollectionViewCompositionalLayout.list(using: config)
     }

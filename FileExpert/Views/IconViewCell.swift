@@ -72,8 +72,14 @@ class IconViewCell: UICollectionViewListCell, ItemView {
         var iconImage: UIImage? = nil
         if item is Folder {
             iconImage = UIImage(systemName: "folder")!
+            if AppState.shared.style == .list {
+                accessories = [.disclosureIndicator()]
+            } else {
+                accessories = []
+            }
         } else {
             iconImage = UIImage(systemName: "doc.richtext")!
+            accessories = []
         }
         iconImage.map { setIconImage($0) }
     }
@@ -199,7 +205,10 @@ extension IconViewCell {
 
             var content = self.defaultContentConfiguration()
             contentConfiguration = content
-            accessories = [.disclosureIndicator()]
+            
+            if item is Folder {
+                accessories = [.disclosureIndicator()]
+            }
             /*
             var background = UIBackgroundConfiguration.listPlainCell()
             self.backgroundConfiguration = background
