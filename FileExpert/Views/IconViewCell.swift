@@ -91,7 +91,7 @@ extension IconViewCell {
             if IconViewCell.testing {
                 v.backgroundColor = .red
             } else {
-                v.backgroundColor = .white
+                //v.backgroundColor = .white
             }
             v.layer.cornerRadius = 8
             v.layer.borderWidth = 0.3

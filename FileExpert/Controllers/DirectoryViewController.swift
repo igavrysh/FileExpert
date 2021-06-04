@@ -28,7 +28,7 @@ class DirectoryViewController: UIViewController {
         case main
     }
     
-    var directoryCollectionView: UICollectionView!
+    var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     
     convenience init() {
@@ -98,28 +98,68 @@ extension DirectoryViewController {
         
         if notification.object is AppState {
             toggleButton.image = getAppStateIconImage()
-            directoryCollectionView.setCollectionViewLayout(getLayout(), animated: true)
+            collectionView.setCollectionViewLayout(getLayout(), animated: true)
         }
     }
 }
 
 extension DirectoryViewController {
     func configureDataSource() {
+        
+        let gridCellRegistration = createGridCellRegistration()
+        // data source
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
+            (collectionView, indexPath, item) -> UICollectionViewCell? in
+            return collectionView.dequeueConfiguredReusableCell(using: gridCellRegistration, for: indexPath, item: item)
+        }
+        
+        /*
         let iconViewCellRegistration = createIconViewCellRegistration()
         
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: directoryCollectionView) {
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: iconViewCellRegistration, for: indexPath, item: identifier)
         }
+         */
+        
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
         snapshot.appendItems(folder.contents)
         dataSource.apply(snapshot, animatingDifferences: true)
+         
     }
     
-    func createIconViewCellRegistration() ->  UICollectionView.CellRegistration<IconViewCell, Item> {
-        return UICollectionView.CellRegistration<IconViewCell, Item>{ (cell, indexPath, item) in
+    func createIconViewCellRegistration() -> UICollectionView.CellRegistration<IconCell, Item> {
+        return UICollectionView.CellRegistration<IconCell, Item>{ (cell, indexPath, item) in
             cell.updateWithItem(item)
+        }
+    }
+    
+    func createGridCellRegistration() -> UICollectionView.CellRegistration<IconCell, Item> {
+        return UICollectionView.CellRegistration<IconCell, Item> { (cell, indexPath, item) in
+            cell.updateWithItem(item)
+            cell.accessories = [.disclosureIndicator()]
+
+            /*
+            
+            var content = UIListContentConfiguration.cell()
+            if item is Folder {
+                content.text = "folder"
+            } else {
+                content.text = "file"
+            }
+            content.image = UIImage(systemName: "folder")
+
+            content.textProperties.font = .boldSystemFont(ofSize: 38)
+            content.textProperties.alignment = .center
+            content.directionalLayoutMargins = .zero
+            cell.contentConfiguration = content
+            var background = UIBackgroundConfiguration.listPlainCell()
+            background.cornerRadius = 8
+            background.strokeColor = .systemGray3
+            background.strokeWidth = 1.0 / cell.traitCollection.displayScale
+            cell.backgroundConfiguration = background
+             */
         }
     }
 }
@@ -147,6 +187,11 @@ extension DirectoryViewController {
     }
     
     func createGridLayout() -> UICollectionViewLayout {
+        let config = UICollectionLayoutListConfiguration(appearance: .plain)
+        return UICollectionViewCompositionalLayout.list(using: config)
+        
+        /*
+        
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int,
             layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
             let contentSize = layoutEnvironment.container.effectiveContentSize
@@ -166,6 +211,7 @@ extension DirectoryViewController {
             return section
         }
         return layout
+         */
     }
     
     func createLayout() -> UICollectionViewLayout {
@@ -213,12 +259,12 @@ extension DirectoryViewController {
     
     func configureHierarchy() {
         view.backgroundColor = .systemBackground
-        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: getLayout())
+        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createGridLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
         collectionView.delegate = self
-        self.directoryCollectionView = collectionView
+        self.collectionView = collectionView
         setupToolbar()
     }
     
@@ -244,6 +290,24 @@ extension DirectoryViewController {
     
     func getAppStateIconImage() -> UIImage {
         return DirectoryViewController.appStateIcons[AppState.shared.style]!
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let indexPath = self.collectionView.indexPathsForSelectedItems?.first {
+            if let coordinator = self.transitionCoordinator {
+                coordinator.animate(alongsideTransition: { context in
+                    self.collectionView.deselectItem(at: indexPath, animated: true)
+                }) { (context) in
+                    if context.isCancelled {
+                        self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    }
+                }
+            } else {
+                self.collectionView.deselectItem(at: indexPath, animated: animated)
+            }
+        }
     }
 }
 
@@ -279,4 +343,3 @@ extension DirectoryViewController {
     
     static let userIcon = UIImage(systemName: "person")!
 }
-
