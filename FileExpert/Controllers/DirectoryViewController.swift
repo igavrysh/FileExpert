@@ -97,8 +97,33 @@ extension DirectoryViewController {
         }
         
         if notification.object is AppState {
+            let selectedIndexPath = directoryCollectionView.indexPathsForSelectedItems?.first
+            var topIndexPath = directoryCollectionView.visibleCells.first.map { self.directoryCollectionView.indexPath(for: $0) }
+            directoryCollectionView.setCollectionViewLayout(getLayout(), animated: true) { (finished) in
+                self.dataSource.apply(self.dataSource.snapshot(), animatingDifferences: false)
+                self.directoryCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
+                topIndexPath?.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.bottom, animated: true) }
+            }
+            //
             toggleButton.image = getAppStateIconImage()
-            directoryCollectionView.setCollectionViewLayout(getLayout(), animated: true)
+
+            
+            /*
+            let selectedPaths: [IndexPath]? = directoryCollectionView
+                .indexPathsForSelectedItems?
+                .compactMap {(indexPath) in
+                    self.directoryCollectionView.deselectItem(at: indexPath, animated: true)
+                    return indexPath
+                }
+            */
+
+            // { (finished) in
+                /*
+                _ = selectedPaths?.compactMap { indexPath in
+                    self.directoryCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
+                }
+                 */
+            //}
         }
     }
 }
@@ -127,6 +152,7 @@ extension DirectoryViewController {
 extension DirectoryViewController {
         
     func createListLayout() -> UICollectionViewLayout {
+   
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0))
@@ -144,6 +170,11 @@ extension DirectoryViewController {
         let layout = UICollectionViewCompositionalLayout(section: section)
         
         return layout
+        
+        /*var config = UICollectionLayoutListConfiguration(appearance: .plain)
+        
+        return UICollectionViewCompositionalLayout.list(using: config)
+        */
     }
     
     func createGridLayout() -> UICollectionViewLayout {
@@ -162,38 +193,6 @@ extension DirectoryViewController {
 
             let section = NSCollectionLayoutSection(group: group)
             section.contentInsets = NSDirectionalEdgeInsets(top: padding, leading: padding, bottom: padding, trailing: padding)
-
-            return section
-        }
-        return layout
-    }
-    
-    func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int,
-            layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
-            let contentSize = layoutEnvironment.container.effectiveContentSize
-            var columns = 3
-            if contentSize.width > 600 {
-                columns = 4
-            }
-            if contentSize.width > 1000 {
-                columns = 5
-            }
-    
-            //let spacing = CGFloat(0)
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                  heightDimension: .fractionalHeight(1.0))
-            // instead of .absolute(120)
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                   heightDimension: .estimated(120))
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: columns)
-            //group.interItemSpacing = .fixed(spacing)
-
-            let section = NSCollectionLayoutSection(group: group)
-            //section.interGroupSpacing = spacing
-            section.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
 
             return section
         }

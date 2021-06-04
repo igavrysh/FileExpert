@@ -7,7 +7,7 @@
 
 import UIKit
 
-class IconViewCell: UICollectionViewCell, ItemView {
+class IconViewCell: UICollectionViewListCell, ItemView {
    
     static let reuseIdentifier = "icon-view-cell-reuse-identifier"
     
@@ -60,6 +60,7 @@ class IconViewCell: UICollectionViewCell, ItemView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureHierarchy()
+        configureObserver()
     }
     
     func updateUIWithItem(_ item: ItemModel) {
@@ -84,7 +85,17 @@ class IconViewCell: UICollectionViewCell, ItemView {
 
 extension IconViewCell {
     func configureHierarchy() {
+        setupContentForStyle(AppState.shared.style)
+        
+        //content.text = "abc"
+        //content.textProperties.font = .boldSystemFont(ofSize: 38)
+        //content.textProperties.alignment = .center
+        
+        
+        
         iconSize = frame.height * cellFillRatioIcon
+        
+        /*
         self.backgroundView = {
             let v = UIView()
             v.fillSuperview()
@@ -98,7 +109,7 @@ extension IconViewCell {
             v.layer.borderColor = UIColor.lightGray.cgColor
             self.addSubview(v)
             return v
-        }()
+        }()*/
 
         self.translatesAutoresizingMaskIntoConstraints = false
         
@@ -153,5 +164,69 @@ extension IconViewCell {
         nameLabel.heightAnchor.constraint(lessThanOrEqualTo: self.heightAnchor, multiplier: cellFillRatioText).isActive = true
         */
         UIImage(named: "placeholder").map{ setIconImage($0) }
+    }
+}
+
+extension IconViewCell {
+    func configureObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleChangeNotification(_:)),
+            name: Store.changeNotification,
+            object: nil)
+    }
+    
+    @objc func handleChangeNotification(_ notification: Notification) {
+        if notification.object is AppState {
+            setupContentForStyle(AppState.shared.style)
+        }
+    }
+    
+    func setupContentForStyle(_ style: DirectoryViewStyle) {
+        switch style {
+        case .icons:
+            var background = UIBackgroundConfiguration.listPlainCell()
+            background.cornerRadius = 8
+            background.strokeColor = .systemGray3
+            background.strokeWidth = 1.0 / self.traitCollection.displayScale
+            self.backgroundConfiguration = background
+            
+            contentConfiguration = nil
+            accessories = []
+        case .list:
+            var background = UIBackgroundConfiguration.listPlainCell()
+            self.backgroundConfiguration = background
+
+            var content = self.defaultContentConfiguration()
+            contentConfiguration = content
+            accessories = [.disclosureIndicator()]
+            /*
+            var background = UIBackgroundConfiguration.listPlainCell()
+            self.backgroundConfiguration = background
+            */
+        }
+        
+        /*
+        switch style {
+        case .icons:
+            var background = UIBackgroundConfiguration.listPlainCell()
+            background.cornerRadius = 8
+            background.strokeColor = .systemGray3
+            background.strokeWidth = 1.0 / self.traitCollection.displayScale
+            self.backgroundConfiguration = background
+            
+            accessories = []
+            contentConfiguration = nil
+        case .list:
+            var content = self.defaultContentConfiguration()
+            contentConfiguration = content
+            accessories = [.disclosureIndicator()]
+            
+            content.directionalLayoutMargins = .zero
+            
+            self.backgroundConfiguration = nil
+        }
+         */
+         
     }
 }
