@@ -211,6 +211,8 @@ extension IconViewCell {
         switch style {
         case .icons:
             UIView.animate(withDuration: 1.0, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.1, options: .curveEaseIn, animations: {
+                
+                
                 self.listLayoutConstraints.map { NSLayoutConstraint.deactivate([$0.iconViewLeading, $0.iconViewTop, $0.iconViewBottom, $0.iconViewWidth]) }
                 self.gridLayoutConstraints.map { NSLayoutConstraint.activate([$0.iconViewCenterX, $0.iconViewCenterY, $0.iconViewWidth, $0.iconViewHeight]) }
                 self.layoutIfNeeded()

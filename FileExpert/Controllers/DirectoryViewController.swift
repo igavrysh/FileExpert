@@ -50,7 +50,7 @@ class DirectoryViewController: UIViewController {
         configureHierarchy()
         configureDataSource()
         configureObserver()
-        applySnapshot()
+        applyInitialSnapshot()
         Store.shared.load()
     }
 }
@@ -135,7 +135,7 @@ extension DirectoryViewController {
 
 extension DirectoryViewController {
     func configureDataSource() {
-        let iconViewCellRegistration = createIconViewCellRegistration()
+        let iconViewCellRegistration = createGridCellRegistration()
         
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: directoryCollectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
@@ -143,10 +143,42 @@ extension DirectoryViewController {
         }
     }
     
+    func createGridCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Item> {
+        return UICollectionView.CellRegistration<UICollectionViewCell, Item> { (cell, indexPath, item) in
+            var content = UIListContentConfiguration.cell()
+            if item is Directory {
+                content.text = "dir"
+            } else {
+                content.text = "file"
+            }
+            content.textProperties.font = .boldSystemFont(ofSize: 38)
+            content.textProperties.alignment = .center
+            content.directionalLayoutMargins = .zero
+            cell.contentConfiguration = content
+            var background = UIBackgroundConfiguration.listPlainCell()
+            background.cornerRadius = 8
+            background.strokeColor = .systemGray3
+            background.strokeWidth = 1.0 / cell.traitCollection.displayScale
+            cell.backgroundConfiguration = background
+        }
+    }
+
+    
     func createIconViewCellRegistration() ->  UICollectionView.CellRegistration<IconViewCell, Item> {
         return UICollectionView.CellRegistration<IconViewCell, Item>{ (cell, indexPath, item) in
             cell.updateWithItem(item)
         }
+    }
+    
+    func applyInitialSnapshot() {
+        let sections = Section.allCases
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections(sections)
+        dataSource.apply(snapshot, animatingDifferences: false)
+        
+        var folderItemsSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
+        folderItemsSnapshot.append(self.directory.contents)
+        dataSource.apply(folderItemsSnapshot, to: .main, animatingDifferences: false)
     }
     
     func applySnapshot() {
@@ -258,7 +290,7 @@ extension DirectoryViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = self.dataSource.itemIdentifier(for: indexPath) else {
-            collectionView.deselectItem(at: indexPath, animated: true)
+            collectionView.deselectItem(at: indexPath, animated: false)
             return
         }
         
