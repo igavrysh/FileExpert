@@ -11,10 +11,20 @@ class IconViewCell: UICollectionViewListCell, ItemView {
    
     static let reuseIdentifier = "icon-view-cell-reuse-identifier"
     
-    static let testing = false
+    static let testing = true
     
     let cellFillRatioIcon: CGFloat = 0.60
     let cellFillRatioText: CGFloat = 0.30
+    
+    private var gridLayoutConstraints: (iconViewCenterX: NSLayoutConstraint,
+                                        iconViewCenterY: NSLayoutConstraint,
+                                        iconViewWidth: NSLayoutConstraint,
+                                        iconViewHeight: NSLayoutConstraint)?
+    
+    private var listLayoutConstraints: (iconViewLeading: NSLayoutConstraint,
+                                        iconViewTop: NSLayoutConstraint,
+                                        iconViewBottom: NSLayoutConstraint,
+                                        iconViewWidth: NSLayoutConstraint)?
     
     let iconView: UIImageView = {
         var i = UIImageView()
@@ -42,13 +52,7 @@ class IconViewCell: UICollectionViewListCell, ItemView {
     }
     
     func highlight() {
-        self.backgroundView.map{
-            $0.layer.backgroundColor = UIColor.init(
-                red: 0,
-                green: 111.0 / 255.0,
-                blue: 247.0 / 255.0,
-                alpha: 0.2).cgColor
-        }
+        self.backgroundView.map { $0.layer.backgroundColor = UIColor.init(red: 0, green: 111.0 / 255.0, blue: 247.0 / 255.0, alpha: 0.2).cgColor }
     }
     
     func unhighlight() {
@@ -117,7 +121,7 @@ extension IconViewCell {
             return v
         }()*/
 
-        self.translatesAutoresizingMaskIntoConstraints = false
+        //self.translatesAutoresizingMaskIntoConstraints = false
         
         let paddingViewGenerator = {() -> UIView in
             let p = UIView()
@@ -138,7 +142,7 @@ extension IconViewCell {
         iconView.translatesAutoresizingMaskIntoConstraints = false
         
         // self.addSubview(paddingViewTop)
-        self.addSubview(iconView)
+        self.contentView.addSubview(iconView)
         //self.addSubview(paddingViewMiddle)
         //self.addSubview(nameLabel)
         
@@ -150,10 +154,25 @@ extension IconViewCell {
         paddingViewTop.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
         */
         // icon View constraints
-        iconView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon).isActive = true
-        iconView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon).isActive = true
-        iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        //self.contentView.translatesAutoresizingMaskIntoConstraints = false
+
+        gridLayoutConstraints = (
+            iconViewCenterX: iconView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
+            iconViewCenterY: iconView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            iconViewWidth: iconView.widthAnchor.constraint(equalTo: self.contentView.heightAnchor, multiplier: self.cellFillRatioIcon),
+            iconViewHeight: iconView.heightAnchor.constraint(equalTo: self.contentView.heightAnchor, multiplier: self.cellFillRatioIcon)
+        )
+        
+
+        
+        listLayoutConstraints = (
+            iconViewLeading: iconView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 0),
+            iconViewTop: iconView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0),
+            iconViewBottom: iconView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: 0),
+            iconViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor))
+                
+        activateConstraintsForStyle(AppState.shared.style)
+        
 
         
         //iconView.topAnchor.constraint(equalTo: paddingViewTop.bottomAnchor, constant: 0).isActive = true
@@ -184,7 +203,28 @@ extension IconViewCell {
     
     @objc func handleChangeNotification(_ notification: Notification) {
         if notification.object is AppState {
-            setupContentForStyle(AppState.shared.style)
+            DispatchQueue.main.async {
+                self.setupContentForStyle(AppState.shared.style)
+                self.activateConstraintsForStyle(AppState.shared.style)
+            }
+        }
+    }
+    
+    func activateConstraintsForStyle(_ style: DirectoryViewStyle) {
+        switch style {
+        case .icons:
+            UIView.animate(withDuration: 1.0, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.1, options: .curveEaseIn, animations: {
+                self.listLayoutConstraints.map { NSLayoutConstraint.deactivate([$0.iconViewLeading, $0.iconViewTop, $0.iconViewBottom, $0.iconViewWidth]) }
+                self.gridLayoutConstraints.map { NSLayoutConstraint.activate([$0.iconViewCenterX, $0.iconViewCenterY, $0.iconViewWidth, $0.iconViewHeight]) }
+                self.layoutIfNeeded()
+              }, completion: nil)
+
+        case .list:
+            UIView.animate(withDuration: 1.0, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.1, options: .curveEaseIn, animations: {
+                self.gridLayoutConstraints.map { NSLayoutConstraint.deactivate([$0.iconViewCenterX, $0.iconViewCenterY, $0.iconViewWidth, $0.iconViewHeight]) }
+                self.listLayoutConstraints.map { NSLayoutConstraint.activate([$0.iconViewLeading, $0.iconViewTop, $0.iconViewBottom, $0.iconViewWidth]) }
+                self.layoutIfNeeded()
+            }, completion: nil)
         }
     }
     
