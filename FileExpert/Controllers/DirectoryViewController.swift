@@ -17,7 +17,7 @@ class DirectoryViewController: UIViewController {
         }
     }
     
-    let folder: Folder
+    let directory: Directory
     
     var toggleButton: UIBarButtonItem!
     var userButton: UIBarButtonItem!
@@ -32,11 +32,11 @@ class DirectoryViewController: UIViewController {
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     
     convenience init() {
-        self.init(folder: Store.shared.rootFolder)
+        self.init(directory: Store.shared.rootFolder)
     }
     
-    init(folder: Folder) {
-        self.folder = folder
+    init(directory: Directory) {
+        self.directory = directory
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -152,7 +152,7 @@ extension DirectoryViewController {
     func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(self.folder.contents)
+        snapshot.appendItems(self.directory.contents)
         self.dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
@@ -244,7 +244,7 @@ extension DirectoryViewController {
         userButton = genButtonWithImage(DirectoryViewController.userIcon)
         navigationItem.rightBarButtonItems = [toggleButton, addDirectoryButton, addFileButton]
         
-        if folder.isRoot == true {
+        if directory.isRoot == true {
             navigationItem.leftBarButtonItem = userButton
         }
     }
@@ -262,8 +262,8 @@ extension DirectoryViewController: UICollectionViewDelegate {
             return
         }
         
-        if let folder = item as? Folder {
-            let vc = DirectoryViewController(folder: folder)
+        if let directory = item as? Directory {
+            let vc = DirectoryViewController(directory: directory)
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

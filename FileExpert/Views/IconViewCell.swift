@@ -7,7 +7,7 @@
 
 import UIKit
 
-class IconViewCell: UICollectionViewListCell, ItemView {
+class IconViewCell: UICollectionViewListCell {
    
     static let reuseIdentifier = "icon-view-cell-reuse-identifier"
     
@@ -67,14 +67,11 @@ class IconViewCell: UICollectionViewListCell, ItemView {
         configureObserver()
     }
     
-    func updateUIWithItem(_ item: ItemModel) {
-    }
-    
     func updateWithItem(_ item: Item) {
         self.item = item
         nameLabel.text = item.name
         var iconImage: UIImage? = nil
-        if item is Folder {
+        if item is Directory {
             iconImage = UIImage(systemName: "folder")!
             if AppState.shared.style == .list {
                 accessories = [.disclosureIndicator()]
@@ -246,7 +243,7 @@ extension IconViewCell {
             var content = self.defaultContentConfiguration()
             contentConfiguration = content
             
-            if item is Folder {
+            if item is Directory {
                 accessories = [.disclosureIndicator()]
             }
             /*

@@ -15,7 +15,7 @@ class Item: Hashable {
     
     weak var store: Store?
     
-    weak var parent: Folder? {
+    weak var parent: Directory? {
         didSet {
             store = parent?.store
         }

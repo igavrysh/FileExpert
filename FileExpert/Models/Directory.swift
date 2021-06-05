@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Folder: Item {
+class Directory: Item {
     private(set) var contents: [Item]
     
     enum SortType {
@@ -86,13 +86,13 @@ class Folder: Item {
     var sortStrategies: [SortType: ((_: Item, _: Item) -> Bool)] = [
         .nameAsc: { $0.name < $1.name },
         .directoryFileNameAsc: { (item1, item2) -> Bool in
-            if (item1 is Folder && item2 is Folder)
-                || (item1 is FileNew && item2 is FileNew) {
+            if (item1 is Directory && item2 is Directory)
+                || (item1 is File && item2 is File) {
                 return item1.name < item2.name
             } else {
-                if item1 is FileNew && item2 is Folder {
+                if item1 is File && item2 is Directory {
                     return false
-                } else if item1 is Folder && item2 is FileNew {
+                } else if item1 is Directory && item2 is File {
                     return true
                 }
                 fatalError("Unexpect file and directory configuration found when trying to sort items")

@@ -56,7 +56,7 @@ class SheetService {
             completion(sheet, error)
         }
     }
-    
+    /*
     func addFile(_ file: File, completion: @escaping (Sheet?, Error?) -> ()) {
         guard let directory = file.directory else {
             completion(nil, self.errorWithDesc("Incorrect File entity, missing File Directory"))
@@ -87,7 +87,7 @@ class SheetService {
             
             completion(nil, nil)
         }
-    }
+    }*/
     
     private func errorWithDesc(_ desc: String) -> Error {
         return NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: desc]) as Error
