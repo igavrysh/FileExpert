@@ -135,7 +135,7 @@ extension DirectoryViewController {
 
 extension DirectoryViewController {
     func configureDataSource() {
-        let iconViewCellRegistration = createGridCellRegistration()
+        let iconViewCellRegistration = createIconViewCellRegistration()
         
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: directoryCollectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
@@ -143,7 +143,7 @@ extension DirectoryViewController {
         }
     }
     
-    func createGridCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Item> {
+    func createSimpleGridCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Item> {
         return UICollectionView.CellRegistration<UICollectionViewCell, Item> { (cell, indexPath, item) in
             var content = UIListContentConfiguration.cell()
             if item is Directory {
@@ -192,7 +192,7 @@ extension DirectoryViewController {
 extension DirectoryViewController {
         
     func createListLayout() -> UICollectionViewLayout {
-        /*
+        
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0))
@@ -210,11 +210,12 @@ extension DirectoryViewController {
         let layout = UICollectionViewCompositionalLayout(section: section)
         
         return layout
-        */
-         
+        
+        /*
         var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
         
         return UICollectionViewCompositionalLayout.list(using: config)
+         */
     }
     
     func createGridLayout() -> UICollectionViewLayout {
