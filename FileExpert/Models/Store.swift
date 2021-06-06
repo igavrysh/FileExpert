@@ -53,7 +53,10 @@ class Store {
     }
     
     func save(_ notifying: Item, userInfo: [AnyHashable: Any]) {
-        NotificationCenter.default.post(name: Store.changeNotification, object: notifying, userInfo: userInfo)
+        print("sending notification about item: \(notifying.name)")
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: Store.changeNotification, object: notifying, userInfo: userInfo)
+        }
     }
     
     func item(atIdPath path: [String]) -> Item? {
@@ -88,7 +91,9 @@ class Store {
             let row = queue.remove(at: 0)
             if row.type == .sheetRecordTypeFile {
                 if let parentDir = dirs[row.parentId] {
-                    _ = parentDir.add(File(name: row.name, id: row.id))
+                    
+                    let file = parentDir.add(File(name: row.name, id: row.id))
+                    print("created file: \(file.name)")
                     Thread.sleep(forTimeInterval: 0.1)
                 }
             }
@@ -98,8 +103,10 @@ class Store {
                 if (row.id != .rootDirectoryId) {
                     if let dir = parentDir?.add(Directory(name: row.name, id: row.id)) as? Directory {
                         dirs[dir.id] = dir
+                        print("created dir: \(dir.name)")
+
                     }
-                    Thread.sleep(forTimeInterval: 0.1)
+                    //Thread.sleep(forTimeInterval: 0.1)
                 }
                 if let children = sheetsByParentId[row.id] {
                     queue.append(contentsOf: children.records)

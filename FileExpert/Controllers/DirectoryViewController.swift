@@ -47,10 +47,10 @@ class DirectoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = titleText
+        configureObserver()
         configureHierarchy()
         configureDataSource()
-        configureObserver()
-        applyInitialSnapshot()
+        applySnapshot()
         Store.shared.load()
     }
 }
@@ -74,8 +74,16 @@ extension DirectoryViewController {
     }
     
     @objc func handleChangeNotification(_ notification: Notification) {
-        if notification.object is Item {
+        
+        if let f = notification.object as? File, f.parent === directory {
             DispatchQueue.main.async {
+                print("applying snapshot for file: \(f.name)")
+                self.applySnapshot()
+            }
+        }
+        if let d = notification.object as? Directory, d.parent === directory {
+            DispatchQueue.main.async {
+                print("applying snapshot for dir: \(d.name)")
                 self.applySnapshot()
             }
         }
@@ -187,11 +195,19 @@ extension DirectoryViewController {
     }
     
     func applySnapshot() {
+        print("applying snapshot content items volume: \(directory.contents.count)")
+        let items = directory.contents
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items)
+        dataSource.apply(snapshot, animatingDifferences: true)
+        
+        /*
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendItems(self.directory.contents, toSection: .main)
         //snapshot.appendSections([.main])
         //snapshot.appendItems(self.directory.contents)
-        self.dataSource.apply(snapshot, animatingDifferences: true)
+        self.dataSource.apply(snapshot, animatingDifferences: true)*/
     }
 }
 
