@@ -83,6 +83,7 @@ extension DirectoryViewController {
         if notification.object is AppState {
             
             DispatchQueue.main.async { [self] in
+                
                 var topIndexPath: IndexPath?
                 
                 for cell in self.directoryCollectionView.visibleCells {
@@ -98,6 +99,8 @@ extension DirectoryViewController {
                 }
                 let selectedIndexPath = self.directoryCollectionView.indexPathsForSelectedItems?.first
                 selectedIndexPath.map { self.directoryCollectionView.deselectItem(at: $0, animated: false) }
+                
+             
                 directoryCollectionView.setCollectionViewLayout(self.getLayout(), animated: true) { (finished) in
                     self.dataSource.apply(self.dataSource.snapshot(), animatingDifferences: false)
                     self.directoryCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
@@ -107,6 +110,9 @@ extension DirectoryViewController {
                     selectedIndexPath.map {self.directoryCollectionView.selectItem(at: $0, animated: true, scrollPosition: []) }
                     topIndexPath.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.centeredVertically, animated: true) }
                 }
+                
+                
+                
                 //
                 toggleButton.image = getAppStateIconImage()
             }

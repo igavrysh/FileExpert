@@ -27,7 +27,7 @@ class Store {
         // follow up refreshes
         if rootFolder.contents.count == 0 {
             DispatchQueue.global(qos: .background).async { [weak self] in
-                
+                /*
                 let abcFolder = self?.rootFolder.add(Directory(name: "abc", id: "abc"))
                 let abc1Folder = self?.rootFolder.add(Directory(name: "abc1", id: "abc1"))
                 let abc2Folder = self?.rootFolder.add(Directory(name: "abc2", id: "abc2"))
@@ -38,10 +38,7 @@ class Store {
                         name: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
                         id: "id2"))
                 (abcFolder as? Directory)?.add(Directory(name: "in abc", id: "in abc"))
-                
-                 
-                
-                /*
+                */
                 
                 self?.sheetService.fetchSheet { [weak self] (sheet, error) in
                     if error != nil {
@@ -51,13 +48,8 @@ class Store {
                         self?.loadDirectoryFromSheet(sheet)
                     }
                 }
-                 */
-                
-                
             }
         }
-
-        
     }
     
     func save(_ notifying: Item, userInfo: [AnyHashable: Any]) {

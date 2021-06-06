@@ -13,7 +13,7 @@ class IconViewCell: UICollectionViewListCell {
     
     static let testing = false
     
-    let cellFillRatioIcon: CGFloat = 0.60
+    let cellFillRatioIcon: CGFloat = 0.75
     let cellFillRatioText: CGFloat = 0.30
     
     private var gridLayoutConstraints: (iconViewCenterX: NSLayoutConstraint,
@@ -21,17 +21,17 @@ class IconViewCell: UICollectionViewListCell {
                                         iconViewWidth: NSLayoutConstraint,
                                         iconViewHeight: NSLayoutConstraint)?
     
-    private var listLayoutConstraints: (iconViewLeading: NSLayoutConstraint,
-                                        iconViewTop: NSLayoutConstraint,
-                                        iconViewBottom: NSLayoutConstraint,
-                                        iconViewWidth: NSLayoutConstraint)?
+    private var listLayoutConstraints: (listViewLeft: NSLayoutConstraint,
+                                        listViewTop: NSLayoutConstraint,
+                                        listViewBottom: NSLayoutConstraint,
+                                        listViewWidth: NSLayoutConstraint)?
     
     let iconView: UIImageView = {
         var i = UIImageView()
         if IconViewCell.testing {
             i.backgroundColor = .blue
         }
-        i.contentMode = .scaleAspectFill
+        i.contentMode = .scaleAspectFit
         return i
     }()
     var iconSize: CGFloat = 0
@@ -147,14 +147,15 @@ extension IconViewCell {
             iconViewCenterX: iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             iconViewCenterY: iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             iconViewWidth: iconView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon),
-            iconViewHeight: iconView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon)
-        )
+            iconViewHeight: iconView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon))
         
         listLayoutConstraints = (
-            iconViewLeading: iconView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5),
-            iconViewTop: iconView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
-            iconViewBottom: iconView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5),
-            iconViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor))
+            listViewLeft: iconView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10),
+            listViewTop: iconView.topAnchor.constraint(equalTo: self.topAnchor, constant: 3),
+            listViewBottom: iconView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -3),
+            listViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor)
+            //listViewWidth: iconView.widthAnchor.constraint(equalToConstant: 10)
+        )
                 
         activateConstraintsForStyle(AppState.shared.style, animated: false)
         
@@ -199,66 +200,63 @@ extension IconViewCell {
         switch style {
         case .icons:
             let fromListToGrid = { () -> Void in
-                self.gridLayoutConstraints?.iconViewHeight.priority = UILayoutPriority.init(100)
-                self.gridLayoutConstraints?.iconViewCenterX.priority = UILayoutPriority.init(100)
-                self.gridLayoutConstraints?.iconViewCenterY.priority = UILayoutPriority.init(100)
-                self.gridLayoutConstraints?.iconViewWidth.priority = UILayoutPriority.init(100)
-
-                self.listLayoutConstraints?.iconViewWidth.priority = UILayoutPriority.init(1)
-                self.listLayoutConstraints?.iconViewLeading.priority = UILayoutPriority.init(1)
-                self.listLayoutConstraints?.iconViewTop.priority = UILayoutPriority.init(1)
-                self.listLayoutConstraints?.iconViewBottom.priority = UILayoutPriority.init(1)
-                
-                
-                self.listLayoutConstraints.map { NSLayoutConstraint.activate([$0.iconViewLeading, $0.iconViewTop, $0.iconViewBottom, $0.iconViewWidth]) }
-                self.gridLayoutConstraints.map { NSLayoutConstraint.activate([$0.iconViewCenterX, $0.iconViewCenterY, $0.iconViewWidth, $0.iconViewHeight]) }
-                self.layoutIfNeeded()
+                self.listLayoutConstraints?.listViewWidth.isActive = false
+                self.listLayoutConstraints?.listViewLeft.isActive = false
+                self.listLayoutConstraints?.listViewTop.isActive = false
+                self.listLayoutConstraints?.listViewBottom.isActive = false
+                self.gridLayoutConstraints?.iconViewWidth.isActive = true
+                self.gridLayoutConstraints?.iconViewHeight.isActive = true
+                self.gridLayoutConstraints?.iconViewCenterX.isActive = true
+                self.gridLayoutConstraints?.iconViewCenterY.isActive = true
             }
-     
+            
+            fromListToGrid()
             
             if animated {
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
+                    self.layoutIfNeeded()
+                }, completion: nil)
+/*
                 UIView.animate(withDuration: 1.0,
                                delay: 0.0,
-                               usingSpringWithDamping: 0.3,
+                               usingSpringWithDamping: 0.0,
                                initialSpringVelocity: 0.1,
                                options: .curveEaseIn,
-                               animations: {
-                                    
-                               },
-                               completion: nil)
-            } else {
-                fromListToGrid()
+                               animations: { self.layoutIfNeeded() },
+                               completion: nil)*/
             }
-   
         case .list:
             
             let fromGridToList = { () -> Void in
-                self.gridLayoutConstraints?.iconViewHeight.priority = UILayoutPriority.init(1)
-                self.gridLayoutConstraints?.iconViewCenterX.priority = UILayoutPriority.init(1)
-                self.gridLayoutConstraints?.iconViewCenterY.priority = UILayoutPriority.init(1)
-                self.gridLayoutConstraints?.iconViewWidth.priority = UILayoutPriority.init(1)
-
-                self.listLayoutConstraints?.iconViewWidth.priority = UILayoutPriority.init(100)
-                self.listLayoutConstraints?.iconViewLeading.priority = UILayoutPriority.init(100)
-                self.listLayoutConstraints?.iconViewTop.priority = UILayoutPriority.init(100)
-                self.listLayoutConstraints?.iconViewBottom.priority = UILayoutPriority.init(100)
+                self.gridLayoutConstraints?.iconViewWidth.isActive = false
+                self.gridLayoutConstraints?.iconViewHeight.isActive = false
+                self.gridLayoutConstraints?.iconViewCenterX.isActive = false
+                self.gridLayoutConstraints?.iconViewCenterY.isActive = true
                 
-                self.gridLayoutConstraints.map { NSLayoutConstraint.activate([$0.iconViewCenterX, $0.iconViewCenterY, $0.iconViewWidth, $0.iconViewHeight]) }
-                self.listLayoutConstraints.map { NSLayoutConstraint.activate([$0.iconViewLeading, $0.iconViewTop, $0.iconViewBottom, $0.iconViewWidth]) }
-                
-                self.layoutIfNeeded()
+                self.listLayoutConstraints?.listViewWidth.isActive = true
+                self.listLayoutConstraints?.listViewLeft.isActive = true
+                self.listLayoutConstraints?.listViewTop.isActive = true
+                self.listLayoutConstraints?.listViewBottom.isActive = true
             }
+            fromGridToList()
             
             if animated {
+                /*
                 UIView.animate(withDuration: 1.0,
                                delay: 0.0,
-                               usingSpringWithDamping: 0.3,
+                               usingSpringWithDamping: 0.0,
                                initialSpringVelocity: 0.1,
                                options: .curveEaseIn,
-                               animations: fromGridToList,
+                               animations: {
+                                self.layoutIfNeeded()
+                                
+                               },
                                completion: nil)
-            } else {
-                fromGridToList()
+                 */
+           
+                    UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
+                        self.layoutIfNeeded()
+                    }, completion: nil)
             }
         }
     }
@@ -284,33 +282,6 @@ extension IconViewCell {
             if item is Directory {
                 accessories = [.disclosureIndicator()]
             }
-            /*
-            var background = UIBackgroundConfiguration.listPlainCell()
-            self.backgroundConfiguration = background
-            */
         }
-        
-        /*
-        switch style {
-        case .icons:
-            var background = UIBackgroundConfiguration.listPlainCell()
-            background.cornerRadius = 8
-            background.strokeColor = .systemGray3
-            background.strokeWidth = 1.0 / self.traitCollection.displayScale
-            self.backgroundConfiguration = background
-            
-            accessories = []
-            contentConfiguration = nil
-        case .list:
-            var content = self.defaultContentConfiguration()
-            contentConfiguration = content
-            accessories = [.disclosureIndicator()]
-            
-            content.directionalLayoutMargins = .zero
-            
-            self.backgroundConfiguration = nil
-        }
-         */
-         
     }
 }
