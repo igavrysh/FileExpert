@@ -89,6 +89,7 @@ class Store {
             if row.type == .sheetRecordTypeFile {
                 if let parentDir = dirs[row.parentId] {
                     _ = parentDir.add(File(name: row.name, id: row.id))
+                    Thread.sleep(forTimeInterval: 0.1)
                 }
             }
             if row.type == .sheetRecordTypeDirectory {
@@ -98,6 +99,7 @@ class Store {
                     if let dir = parentDir?.add(Directory(name: row.name, id: row.id)) as? Directory {
                         dirs[dir.id] = dir
                     }
+                    Thread.sleep(forTimeInterval: 0.1)
                 }
                 if let children = sheetsByParentId[row.id] {
                     queue.append(contentsOf: children.records)

@@ -181,7 +181,6 @@ extension DirectoryViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections(sections)
         dataSource.apply(snapshot, animatingDifferences: false)
-        
         var folderItemsSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
         folderItemsSnapshot.append(self.directory.contents)
         dataSource.apply(folderItemsSnapshot, to: .main, animatingDifferences: false)
@@ -189,8 +188,9 @@ extension DirectoryViewController {
     
     func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(self.directory.contents)
+        snapshot.appendItems(self.directory.contents, toSection: .main)
+        //snapshot.appendSections([.main])
+        //snapshot.appendItems(self.directory.contents)
         self.dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
