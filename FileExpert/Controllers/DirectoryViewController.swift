@@ -97,38 +97,13 @@ extension DirectoryViewController {
             }
             let selectedIndexPath = self.directoryCollectionView.indexPathsForSelectedItems?.first
             selectedIndexPath.map { self.directoryCollectionView.deselectItem(at: $0, animated: false) }
-            
-         
             directoryCollectionView.setCollectionViewLayout(self.getLayout(), animated: true) { (finished) in
                 self.dataSource.apply(self.dataSource.snapshot(), animatingDifferences: false)
                 self.directoryCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
-                
-                
-                //topIndexPath?.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.bottom, animated: true) }
                 selectedIndexPath.map {self.directoryCollectionView.selectItem(at: $0, animated: true, scrollPosition: []) }
                 topIndexPath.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.centeredVertically, animated: true) }
             }
-  
             toggleButtonInternal.setImage(getAppStateIconImage(), for: .normal)
-            
-            
-
-            /*
-            let selectedPaths: [IndexPath]? = directoryCollectionView
-                .indexPathsForSelectedItems?
-                .compactMap {(indexPath) in
-                    self.directoryCollectionView.deselectItem(at: indexPath, animated: true)
-                    return indexPath
-                }
-            */
-
-            // { (finished) in
-                /*
-                _ = selectedPaths?.compactMap { indexPath in
-                    self.directoryCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
-                }
-                 */
-            //}
         }
     }
 }
@@ -287,6 +262,9 @@ extension DirectoryViewController {
         
         if directory.isRoot == true {
             navigationItem.leftBarButtonItem = userButton
+            titleText = .fileExpert
+        } else {
+            titleText = directory.name
         }
     }
     
