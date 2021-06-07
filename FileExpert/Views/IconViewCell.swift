@@ -269,7 +269,7 @@ extension IconViewCell {
         }
         transformation.map { $0() }
         if animated {
-            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: { self.layoutIfNeeded()}, completion: nil)
+            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: { self.layoutIfNeeded()}, completion: nil)
         }
     }
     
