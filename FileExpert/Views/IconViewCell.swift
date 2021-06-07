@@ -11,20 +11,29 @@ class IconViewCell: UICollectionViewListCell {
    
     static let reuseIdentifier = "icon-view-cell-reuse-identifier"
     
+    var item: Item? = nil
+    
     static let testing = false
     
-    let cellFillRatioIcon: CGFloat = 0.75
+    let cellFillRatioIcon: CGFloat = 0.6
     let cellFillRatioText: CGFloat = 0.30
     
     private var gridLayoutConstraints: (iconViewCenterX: NSLayoutConstraint,
                                         iconViewCenterY: NSLayoutConstraint,
                                         iconViewWidth: NSLayoutConstraint,
-                                        iconViewHeight: NSLayoutConstraint)?
+                                        iconViewHeight: NSLayoutConstraint,
+                                        nameLabelTop: NSLayoutConstraint,
+                                        nameLabelLeft: NSLayoutConstraint,
+                                        nameLabelRight: NSLayoutConstraint,
+                                        nameLabelBottom: NSLayoutConstraint)?
     
     private var listLayoutConstraints: (listViewLeft: NSLayoutConstraint,
                                         listViewTop: NSLayoutConstraint,
                                         listViewBottom: NSLayoutConstraint,
-                                        listViewWidth: NSLayoutConstraint)?
+                                        listViewWidth: NSLayoutConstraint,
+                                        nameLabelCenterY: NSLayoutConstraint,
+                                        nameLabelLeft: NSLayoutConstraint,
+                                        nameLabelRight: NSLayoutConstraint)?
     
     let iconView: UIImageView = {
         var i = UIImageView()
@@ -35,10 +44,12 @@ class IconViewCell: UICollectionViewListCell {
         return i
     }()
     var iconSize: CGFloat = 0
-    var item: Item? = nil
-
+    
     let nameLabel: UILabel = {
-        var l = UILabel(text: "hello", font: .systemFont(ofSize: 12), numberOfLines: 2)
+        var l = UILabel()
+        l.text = "placehodler"
+        //l.font = .systemFont(ofSize: 8)
+        l.numberOfLines = 2
         l.textAlignment = .center
         l.lineBreakMode = .byTruncatingMiddle
         if IconViewCell.testing {
@@ -87,9 +98,7 @@ extension IconViewCell {
         //content.text = "abc"
         //content.textProperties.font = .boldSystemFont(ofSize: 38)
         //content.textProperties.alignment = .center
-        
-        
-        
+
         iconSize = frame.height * cellFillRatioIcon
         
         /*
@@ -127,11 +136,12 @@ extension IconViewCell {
     
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         iconView.translatesAutoresizingMaskIntoConstraints = false
-        
+        self.translatesAutoresizingMaskIntoConstraints = false
+
         // self.addSubview(paddingViewTop)
         self.addSubview(iconView)
         //self.addSubview(paddingViewMiddle)
-        //self.addSubview(nameLabel)
+        self.addSubview(nameLabel)
         
         // top padding view setup
         /*
@@ -147,13 +157,20 @@ extension IconViewCell {
             iconViewCenterX: iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             iconViewCenterY: iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             iconViewWidth: iconView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon),
-            iconViewHeight: iconView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon))
+            iconViewHeight: iconView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon),
+            nameLabelTop: nameLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 3),
+            nameLabelLeft: nameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 3),
+            nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 3),
+            nameLabelBottom: nameLabel.bottomAnchor.constraint(lessThanOrEqualTo: self.bottomAnchor, constant: -3))
         
         listLayoutConstraints = (
-            listViewLeft: iconView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10),
+            listViewLeft: iconView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 3),
             listViewTop: iconView.topAnchor.constraint(equalTo: self.topAnchor, constant: 3),
             listViewBottom: iconView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -3),
-            listViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor)
+            listViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor),
+            nameLabelCenterY: nameLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            nameLabelLeft: nameLabel.leadingAnchor.constraint(equalTo: self.iconView.trailingAnchor, constant: 0),
+            nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 3)
             //listViewWidth: iconView.widthAnchor.constraint(equalToConstant: 10)
         )
                 
@@ -200,14 +217,27 @@ extension IconViewCell {
         switch style {
         case .icons:
             let fromListToGrid = { () -> Void in
+
                 self.listLayoutConstraints?.listViewWidth.isActive = false
                 self.listLayoutConstraints?.listViewLeft.isActive = false
                 self.listLayoutConstraints?.listViewTop.isActive = false
                 self.listLayoutConstraints?.listViewBottom.isActive = false
+                self.listLayoutConstraints?.nameLabelCenterY.isActive = false
+                self.listLayoutConstraints?.nameLabelLeft.isActive = false
+                self.listLayoutConstraints?.nameLabelRight.isActive = false
+                
                 self.gridLayoutConstraints?.iconViewWidth.isActive = true
                 self.gridLayoutConstraints?.iconViewHeight.isActive = true
                 self.gridLayoutConstraints?.iconViewCenterX.isActive = true
                 self.gridLayoutConstraints?.iconViewCenterY.isActive = true
+                self.gridLayoutConstraints?.nameLabelTop.isActive = true
+                self.gridLayoutConstraints?.nameLabelLeft.isActive = true
+                self.gridLayoutConstraints?.nameLabelRight.isActive = true
+                self.gridLayoutConstraints?.nameLabelBottom.isActive = true
+                
+                self.nameLabel.numberOfLines = 2
+                self.nameLabel.textAlignment = .center
+ 
             }
             
             fromListToGrid()
@@ -227,18 +257,29 @@ extension IconViewCell {
             }
         case .list:
             
-            let fromGridToList = { () -> Void in
+            let fromGridToListIcon = { () -> Void in
                 self.gridLayoutConstraints?.iconViewWidth.isActive = false
                 self.gridLayoutConstraints?.iconViewHeight.isActive = false
                 self.gridLayoutConstraints?.iconViewCenterX.isActive = false
-                self.gridLayoutConstraints?.iconViewCenterY.isActive = true
-                
+                self.gridLayoutConstraints?.iconViewCenterY.isActive = false
+                self.gridLayoutConstraints?.nameLabelTop.isActive = false
+                self.gridLayoutConstraints?.nameLabelLeft.isActive = false
+                self.gridLayoutConstraints?.nameLabelRight.isActive = false
+                self.gridLayoutConstraints?.nameLabelBottom.isActive = false
                 self.listLayoutConstraints?.listViewWidth.isActive = true
                 self.listLayoutConstraints?.listViewLeft.isActive = true
                 self.listLayoutConstraints?.listViewTop.isActive = true
                 self.listLayoutConstraints?.listViewBottom.isActive = true
+                self.listLayoutConstraints?.nameLabelCenterY.isActive = true
+                self.listLayoutConstraints?.nameLabelLeft.isActive = true
+                self.listLayoutConstraints?.nameLabelRight.isActive = true
+                self.nameLabel.numberOfLines = 1
+                self.nameLabel.textAlignment = .left
+
             }
-            fromGridToList()
+            
+            fromGridToListIcon()
+      
             
             if animated {
                 /*
