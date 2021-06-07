@@ -29,31 +29,33 @@ class SheetService {
         service.apiKey = SheetService.API_KEY
         
         service.executeQuery(query) { (ticket, result, error) in
-            if let error = error {
-                completion(nil, error)
-                return
-            }
-            
-            guard let valueRange = result as? GTLRSheets_ValueRange,
-                  let rows = valueRange.values as? [[String]]
-            else {
-                completion(nil, self.errorWithDesc("Incorrect spreadsheet format"))
-                return
-            }
-            
-            var error: Error?
-            for row in rows {
-                if (row.count != 4) {
-                    error = self.errorWithDesc("Error: incorrect spreadsheet format")
-                } else {
-                    sheet.rows.append(SheetRecord(
-                                        id: row[0],
-                                        parentId: row[1],
-                                        type: row[2],
-                                        name: row[3]))
+            DispatchQueue.global(qos: .background).async {
+                if let error = error {
+                    completion(nil, error)
+                    return
                 }
+                
+                guard let valueRange = result as? GTLRSheets_ValueRange,
+                      let rows = valueRange.values as? [[String]]
+                else {
+                    completion(nil, self.errorWithDesc("Incorrect spreadsheet format"))
+                    return
+                }
+                
+                var error: Error?
+                for row in rows {
+                    if (row.count != 4) {
+                        error = self.errorWithDesc("Error: incorrect spreadsheet format")
+                    } else {
+                        sheet.rows.append(SheetRecord(
+                                            id: row[0],
+                                            parentId: row[1],
+                                            type: row[2],
+                                            name: row[3]))
+                    }
+                }
+                completion(sheet, error)
             }
-            completion(sheet, error)
         }
     }
     /*

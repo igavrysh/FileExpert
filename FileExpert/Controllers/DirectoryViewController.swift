@@ -66,64 +66,50 @@ extension DirectoryViewController {
 
 extension DirectoryViewController {
     func configureObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleChangeNotification(_:)),
-            name: Store.changeNotification,
-            object: nil)
+        NotificationCenter.default.addObserver(forName: Store.changeNotification,
+                                               object: nil,
+                                               queue: OperationQueue.main,
+                                               using: { n in self.handleChangeNotification(n)})
     }
     
     @objc func handleChangeNotification(_ notification: Notification) {
-        
         if let f = notification.object as? File, f.parent === directory {
-            DispatchQueue.main.async {
-                print("applying snapshot for file: \(f.name)")
-                self.applySnapshot()
-            }
+            self.applySnapshot()
         }
         if let d = notification.object as? Directory, d.parent === directory {
-            DispatchQueue.main.async {
-                print("applying snapshot for dir: \(d.name)")
-                self.applySnapshot()
-            }
+            self.applySnapshot()
         }
         
         if notification.object is AppState {
+            var topIndexPath: IndexPath?
             
-            DispatchQueue.main.async { [self] in
-                
-                var topIndexPath: IndexPath?
-                
-                for cell in self.directoryCollectionView.visibleCells {
-                    guard let tip = topIndexPath else {
-                        topIndexPath = self.directoryCollectionView.indexPath(for: cell)
-                        continue
-                    }
-                    if let indexPath = self.directoryCollectionView.indexPath(for: cell) {
-                        if tip.item > indexPath.item {
-                            topIndexPath = indexPath
-                        }
+            for cell in self.directoryCollectionView.visibleCells {
+                guard let tip = topIndexPath else {
+                    topIndexPath = self.directoryCollectionView.indexPath(for: cell)
+                    continue
+                }
+                if let indexPath = self.directoryCollectionView.indexPath(for: cell) {
+                    if tip.item > indexPath.item {
+                        topIndexPath = indexPath
                     }
                 }
-                let selectedIndexPath = self.directoryCollectionView.indexPathsForSelectedItems?.first
-                selectedIndexPath.map { self.directoryCollectionView.deselectItem(at: $0, animated: false) }
-                
-             
-                directoryCollectionView.setCollectionViewLayout(self.getLayout(), animated: true) { (finished) in
-                    self.dataSource.apply(self.dataSource.snapshot(), animatingDifferences: false)
-                    self.directoryCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
-                    
-                    
-                    //topIndexPath?.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.bottom, animated: true) }
-                    selectedIndexPath.map {self.directoryCollectionView.selectItem(at: $0, animated: true, scrollPosition: []) }
-                    topIndexPath.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.centeredVertically, animated: true) }
-                }
-                
-                
-                
-                //
-                toggleButton.image = getAppStateIconImage()
             }
+            let selectedIndexPath = self.directoryCollectionView.indexPathsForSelectedItems?.first
+            selectedIndexPath.map { self.directoryCollectionView.deselectItem(at: $0, animated: false) }
+            
+         
+            directoryCollectionView.setCollectionViewLayout(self.getLayout(), animated: true) { (finished) in
+                self.dataSource.apply(self.dataSource.snapshot(), animatingDifferences: false)
+                self.directoryCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
+                
+                
+                //topIndexPath?.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.bottom, animated: true) }
+                selectedIndexPath.map {self.directoryCollectionView.selectItem(at: $0, animated: true, scrollPosition: []) }
+                topIndexPath.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.centeredVertically, animated: true) }
+            }
+  
+            toggleButton.image = getAppStateIconImage()
+            
             
 
             
@@ -176,7 +162,6 @@ extension DirectoryViewController {
             cell.backgroundConfiguration = background
         }
     }
-
     
     func createIconViewCellRegistration() ->  UICollectionView.CellRegistration<IconViewCell, Item> {
         return UICollectionView.CellRegistration<IconViewCell, Item>{ (cell, indexPath, item) in
@@ -195,19 +180,11 @@ extension DirectoryViewController {
     }
     
     func applySnapshot() {
-        print("applying snapshot content items volume: \(directory.contents.count)")
         let items = directory.contents
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
         snapshot.appendItems(items)
         dataSource.apply(snapshot, animatingDifferences: true)
-        
-        /*
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendItems(self.directory.contents, toSection: .main)
-        //snapshot.appendSections([.main])
-        //snapshot.appendItems(self.directory.contents)
-        self.dataSource.apply(snapshot, animatingDifferences: true)*/
     }
 }
 
