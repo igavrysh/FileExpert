@@ -50,7 +50,7 @@ class DirectoryViewController: UIViewController {
         configureObserver()
         configureHierarchy()
         configureDataSource()
-        applySnapshot()
+        applyInitialSnapshot()
         Store.shared.load()
     }
 }

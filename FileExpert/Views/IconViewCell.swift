@@ -243,7 +243,7 @@ extension IconViewCell {
             fromListToGrid()
             
             if animated {
-                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: {
                     self.layoutIfNeeded()
                 }, completion: nil)
 /*
@@ -295,7 +295,7 @@ extension IconViewCell {
                                completion: nil)
                  */
            
-                    UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
+                    UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: {
                         self.layoutIfNeeded()
                     }, completion: nil)
             }
