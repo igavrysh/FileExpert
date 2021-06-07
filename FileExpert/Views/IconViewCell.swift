@@ -170,7 +170,7 @@ extension IconViewCell {
             listViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor),
             nameLabelCenterY: nameLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             nameLabelLeft: nameLabel.leadingAnchor.constraint(equalTo: self.iconView.trailingAnchor, constant: 0),
-            nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 3)
+            nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -3)
             //listViewWidth: iconView.widthAnchor.constraint(equalToConstant: 10)
         )
                 
