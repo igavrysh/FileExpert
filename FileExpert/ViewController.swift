@@ -7,9 +7,11 @@
 
 import UIKit
 import GoogleSignIn
+import Firebase
+import FirebaseFirestoreSwift
 
 class ViewController: UIViewController, GIDSignInDelegate {
-
+    
     let gidButton: GIDSignInButton = {
         let b = GIDSignInButton()
         b.translatesAutoresizingMaskIntoConstraints = false
@@ -22,6 +24,10 @@ class ViewController: UIViewController, GIDSignInDelegate {
         GIDSignIn.sharedInstance()?.delegate = self
         GIDSignIn.sharedInstance()?.presentingViewController = self
         setupUI()
+    }
+    
+    func configureFilestore() {
+        FirebaseApp.configure()
     }
     
     func setupUI() {
@@ -47,21 +53,32 @@ class ViewController: UIViewController, GIDSignInDelegate {
             return
         }
         
+        DispatchQueue.global(qos: .background).async {
+            let db = Firestore.firestore()
+            var ref: DocumentReference? = nil
+            
+            let dateFormatterPrint = DateFormatter()
+            dateFormatterPrint.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let date = Date(timeIntervalSinceNow: 0)            
+            ref = db.collection("users").addDocument(data: [
+                "fullName": user.profile.name,
+                "givenName": user.profile.givenName,
+                "familyName": user.profile.familyName,
+                "email": user.profile.email,
+                "ts": "\(date)"
+            ]) { err in
+                if let err = err {
+                    print("Error adding document: \(err)")
+                } else {
+                    print("Document added with ID: \(ref!.documentID)")
+                }
+            }
+        }
+        
         let fvc = MainViewController()
         fvc.navigationItem.title = "HOHO"
         fvc.modalPresentationStyle = .fullScreen
         self.present(fvc, animated: true, completion: nil)
-
-        // Perform any operations on signed in user here.
-        /*
-        let userId = user.userID                  // For client-side use only!
-        let idToken = user.authentication.idToken // Safe to send to the server
-        let fullName = user.profile.name
-        let givenName = user.profile.givenName
-        let familyName = user.profile.familyName
-        let email = user.profile.email
-         */
-        // ...
     }
 }
 

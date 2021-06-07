@@ -7,6 +7,7 @@
 
 import UIKit
 import GoogleSignIn
+import Firebase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //var configureError: NSError?
         //GGLContext.sharedInstance()?.configureWithError(&configureError)
         //assert(configureError == nil, "Error configuring Google services: \(String(describing: configureError))")
+        FirebaseApp.configure()
         
         GIDSignIn.sharedInstance()?.clientID = "421258405956-caqbdhke8c2j7msom2eb9ddh7foln9o4.apps.googleusercontent.com"
         GIDSignIn.sharedInstance()

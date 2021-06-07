@@ -7,7 +7,9 @@ target 'FileExpert' do
   
   pod 'GoogleSignIn'
   pod 'GoogleAPIClientForREST/Sheets'
-  pod 'Alamofire'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Firestore'
+  pod 'FirebaseFirestoreSwift'
 
   # Pods for FileExpert
 
