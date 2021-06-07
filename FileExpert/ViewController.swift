@@ -59,14 +59,14 @@ class ViewController: UIViewController, GIDSignInDelegate {
             
             let dateFormatterPrint = DateFormatter()
             dateFormatterPrint.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let date = Date(timeIntervalSinceNow: 0)            
-            ref = db.collection("users").addDocument(data: [
-                "fullName": user.profile.name,
-                "givenName": user.profile.givenName,
-                "familyName": user.profile.familyName,
-                "email": user.profile.email,
-                "ts": "\(date)"
-            ]) { err in
+            let date = Date(timeIntervalSinceNow: 0)
+            var data: [String: String] = [:]
+            _ = user.profile.name.map { data["fullName"] = $0 }
+            _ = user.profile.givenName.map { data["givenName"] = $0 }
+            _ = user.profile.familyName.map { data["familyName"] = $0 }
+            _ = user.profile.email.map { data["email"] = $0 }
+            data["ts"] = "\(date)"
+            ref = db.collection("users").addDocument(data: data) { err in
                 if let err = err {
                     print("Error adding document: \(err)")
                 } else {
