@@ -16,16 +16,29 @@ class IconViewCell: UICollectionViewListCell {
     static let testing = false
     
     let cellFillRatioIcon: CGFloat = 0.6
-    let cellFillRatioText: CGFloat = 0.30
+    let cellFillRatioText: CGFloat = 0.3
+    let cellFillRatioSpacing: CGFloat = (1.0 - 0.6 - 0.3) / 3.0
     
-    private var gridLayoutConstraints: (iconViewCenterX: NSLayoutConstraint,
-                                        iconViewCenterY: NSLayoutConstraint,
+    private var gridLayoutConstraints: (alignmentView1Top: NSLayoutConstraint,
+                                        alignmentView1Leading: NSLayoutConstraint,
+                                        alignmentView1Width: NSLayoutConstraint,
+                                        alignmentView1Height: NSLayoutConstraint,
+                                        
+                                        iconViewTop: NSLayoutConstraint,
+                                        iconViewCenterX: NSLayoutConstraint,
                                         iconViewWidth: NSLayoutConstraint,
                                         iconViewHeight: NSLayoutConstraint,
+                                        
+                                        alignmentView2Top: NSLayoutConstraint,
+                                        alignmentView2Leading: NSLayoutConstraint,
+                                        alignmentView2Width: NSLayoutConstraint,
+                                        alignmentView2Height: NSLayoutConstraint,
+                                        
                                         nameLabelTop: NSLayoutConstraint,
                                         nameLabelLeft: NSLayoutConstraint,
                                         nameLabelRight: NSLayoutConstraint,
-                                        nameLabelBottom: NSLayoutConstraint)?
+                                        nameLabelHegith: NSLayoutConstraint,
+                                        nameLabelCenterX: NSLayoutConstraint)?
     
     private var listLayoutConstraints: (listViewLeft: NSLayoutConstraint,
                                         listViewTop: NSLayoutConstraint,
@@ -48,14 +61,40 @@ class IconViewCell: UICollectionViewListCell {
     let nameLabel: UILabel = {
         var l = UILabel()
         l.text = "placehodler"
-        //l.font = .systemFont(ofSize: 8)
+        l.font = .systemFont(ofSize: 14)
         l.numberOfLines = 2
         l.textAlignment = .center
         l.lineBreakMode = .byTruncatingMiddle
+        //l.adjustsFontSizeToFitWidth = true
+        //l.baselineAdjustment = .alignBaselines
         if IconViewCell.testing {
             l.backgroundColor = .green
         }
         return l
+    }()
+    
+    let alignmentView1: UIView = {
+        var v = UIView()
+        if IconViewCell.testing {
+            v.backgroundColor = .orange
+        }
+        return v
+    }()
+    
+    let alignmentView2: UIView = {
+        var v = UIView()
+        if IconViewCell.testing {
+            v.backgroundColor = .orange
+        }
+        return v
+    }()
+    
+    let alignmentView3: UIView = {
+        var v = UIView()
+        if IconViewCell.testing {
+            v.backgroundColor = .orange
+        }
+        return v
     }()
     
     func setIconImage(_ image: UIImage) {
@@ -129,39 +168,42 @@ extension IconViewCell {
         }
         
         nameLabel.text = "placeholder"
-        let paddingToViewMul = (1 - cellFillRatioIcon - cellFillRatioText) / 5
-        
-        let paddingViewTop = paddingViewGenerator()
-        let paddingViewMiddle = paddingViewGenerator()
     
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         iconView.translatesAutoresizingMaskIntoConstraints = false
+        alignmentView1.translatesAutoresizingMaskIntoConstraints = false
+        alignmentView2.translatesAutoresizingMaskIntoConstraints = false
+        alignmentView3.translatesAutoresizingMaskIntoConstraints = false
         self.translatesAutoresizingMaskIntoConstraints = false
 
-        // self.addSubview(paddingViewTop)
+        self.addSubview(alignmentView1)
+        self.addSubview(alignmentView2)
+        self.addSubview(alignmentView3)
         self.addSubview(iconView)
-        //self.addSubview(paddingViewMiddle)
         self.addSubview(nameLabel)
-        
-        // top padding view setup
-        /*
-        paddingViewTop.widthAnchor.constraint(equalToConstant: 0).isActive = true
-        paddingViewTop.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: paddingToViewMul * 4).isActive = true
-        paddingViewTop.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        paddingViewTop.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        */
-        // icon View constraints
-        //self.contentView.translatesAutoresizingMaskIntoConstraints = false
 
         gridLayoutConstraints = (
-            iconViewCenterX: iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            iconViewCenterY: iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            iconViewWidth: iconView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon),
-            iconViewHeight: iconView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: self.cellFillRatioIcon),
-            nameLabelTop: nameLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 3),
-            nameLabelLeft: nameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 3),
-            nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 3),
-            nameLabelBottom: nameLabel.bottomAnchor.constraint(lessThanOrEqualTo: self.bottomAnchor, constant: -3))
+            alignmentView1Top: alignmentView1.topAnchor.constraint(equalTo: topAnchor),
+            alignmentView1Leading: alignmentView1.leadingAnchor.constraint(equalTo: leadingAnchor),
+            alignmentView1Width: alignmentView1.widthAnchor.constraint(equalToConstant: 30),
+            alignmentView1Height: alignmentView1.heightAnchor.constraint(equalTo: heightAnchor, multiplier: cellFillRatioSpacing),
+            
+            iconViewTop: iconView.topAnchor.constraint(equalTo: self.alignmentView1.bottomAnchor),
+            iconViewCenterX: iconView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            iconViewWidth: iconView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: cellFillRatioIcon),
+            iconViewHeight: iconView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: cellFillRatioIcon),
+            
+            alignmentView2Top: alignmentView2.topAnchor.constraint(equalTo: iconView.bottomAnchor),
+            alignmentView2Leading: alignmentView2.leadingAnchor.constraint(equalTo: leadingAnchor),
+            alignmentView2Width: alignmentView2.widthAnchor.constraint(equalToConstant: 30),
+            alignmentView2Height: alignmentView2.heightAnchor.constraint(equalTo: heightAnchor, multiplier: cellFillRatioSpacing),
+            
+            nameLabelTop: nameLabel.topAnchor.constraint(equalTo: alignmentView2.bottomAnchor),
+            nameLabelLeft: nameLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 3),
+            nameLabelRight: nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -3),
+            nameLabelHegith: nameLabel.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, multiplier: cellFillRatioText),
+            nameLabelCenterX: nameLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+        )
         
         listLayoutConstraints = (
             listViewLeft: iconView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 3),
@@ -171,26 +213,10 @@ extension IconViewCell {
             nameLabelCenterY: nameLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             nameLabelLeft: nameLabel.leadingAnchor.constraint(equalTo: self.iconView.trailingAnchor, constant: 0),
             nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -3)
-            //listViewWidth: iconView.widthAnchor.constraint(equalToConstant: 10)
         )
                 
         activateConstraintsForStyle(AppState.shared.style, animated: false)
         
-
-        
-        //iconView.topAnchor.constraint(equalTo: paddingViewTop.bottomAnchor, constant: 0).isActive = true
-        /*
-        // middle padding view setup
-        paddingViewMiddle.widthAnchor.constraint(equalToConstant: 0).isActive = true
-        paddingViewMiddle.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: paddingToViewMul).isActive = true
-        paddingViewMiddle.topAnchor.constraint(equalTo: self.iconView.bottomAnchor).isActive = true
-        paddingViewMiddle.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        
-        nameLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        nameLabel.topAnchor.constraint(equalTo: paddingViewMiddle.bottomAnchor).isActive = true
-        nameLabel.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1 - 2 * paddingToViewMul).isActive = true
-        nameLabel.heightAnchor.constraint(lessThanOrEqualTo: self.heightAnchor, multiplier: cellFillRatioText).isActive = true
-        */
         UIImage(named: "placeholder").map{ setIconImage($0) }
     }
 }
@@ -226,14 +252,25 @@ extension IconViewCell {
                 self.listLayoutConstraints?.nameLabelLeft.isActive = false
                 self.listLayoutConstraints?.nameLabelRight.isActive = false
                 
-                self.gridLayoutConstraints?.iconViewWidth.isActive = true
-                self.gridLayoutConstraints?.iconViewHeight.isActive = true
-                self.gridLayoutConstraints?.iconViewCenterX.isActive = true
-                self.gridLayoutConstraints?.iconViewCenterY.isActive = true
-                self.gridLayoutConstraints?.nameLabelTop.isActive = true
-                self.gridLayoutConstraints?.nameLabelLeft.isActive = true
-                self.gridLayoutConstraints?.nameLabelRight.isActive = true
-                self.gridLayoutConstraints?.nameLabelBottom.isActive = true
+                self.gridLayoutConstraints.map {
+                    $0.alignmentView1Top.isActive = true
+                    $0.alignmentView1Leading.isActive = true
+                    $0.alignmentView1Width.isActive = true
+                    $0.alignmentView1Height.isActive = true
+                    $0.iconViewTop.isActive = true
+                    $0.iconViewCenterX.isActive = true
+                    $0.iconViewWidth.isActive = true
+                    $0.iconViewHeight.isActive = true
+                    $0.alignmentView2Top.isActive = true
+                    $0.alignmentView2Leading.isActive = true
+                    $0.alignmentView2Width.isActive = true
+                    $0.alignmentView2Height.isActive = true
+                    $0.nameLabelTop.isActive = true
+                    $0.nameLabelLeft.isActive = true
+                    $0.nameLabelRight.isActive = true
+                    $0.nameLabelHegith.isActive = true
+                    $0.nameLabelCenterX.isActive = true
+                }
                 
                 self.nameLabel.numberOfLines = 2
                 self.nameLabel.textAlignment = .center
@@ -246,26 +283,29 @@ extension IconViewCell {
                 UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: {
                     self.layoutIfNeeded()
                 }, completion: nil)
-/*
-                UIView.animate(withDuration: 1.0,
-                               delay: 0.0,
-                               usingSpringWithDamping: 0.0,
-                               initialSpringVelocity: 0.1,
-                               options: .curveEaseIn,
-                               animations: { self.layoutIfNeeded() },
-                               completion: nil)*/
             }
         case .list:
             
             let fromGridToListIcon = { () -> Void in
-                self.gridLayoutConstraints?.iconViewWidth.isActive = false
-                self.gridLayoutConstraints?.iconViewHeight.isActive = false
-                self.gridLayoutConstraints?.iconViewCenterX.isActive = false
-                self.gridLayoutConstraints?.iconViewCenterY.isActive = false
-                self.gridLayoutConstraints?.nameLabelTop.isActive = false
-                self.gridLayoutConstraints?.nameLabelLeft.isActive = false
-                self.gridLayoutConstraints?.nameLabelRight.isActive = false
-                self.gridLayoutConstraints?.nameLabelBottom.isActive = false
+                self.gridLayoutConstraints.map {
+                    $0.alignmentView1Top.isActive = false
+                    $0.alignmentView1Leading.isActive = false
+                    $0.alignmentView1Width.isActive = false
+                    $0.alignmentView1Height.isActive = false
+                    $0.iconViewTop.isActive = false
+                    $0.iconViewCenterX.isActive = false
+                    $0.iconViewWidth.isActive = false
+                    $0.iconViewHeight.isActive = false
+                    $0.alignmentView2Top.isActive = false
+                    $0.alignmentView2Leading.isActive = false
+                    $0.alignmentView2Width.isActive = false
+                    $0.alignmentView2Height.isActive = false
+                    $0.nameLabelTop.isActive = false
+                    $0.nameLabelLeft.isActive = false
+                    $0.nameLabelRight.isActive = false
+                    $0.nameLabelHegith.isActive = false
+                    $0.nameLabelCenterX.isActive = false
+                }
                 self.listLayoutConstraints?.listViewWidth.isActive = true
                 self.listLayoutConstraints?.listViewLeft.isActive = true
                 self.listLayoutConstraints?.listViewTop.isActive = true
@@ -279,25 +319,9 @@ extension IconViewCell {
             }
             
             fromGridToListIcon()
-      
             
             if animated {
-                /*
-                UIView.animate(withDuration: 1.0,
-                               delay: 0.0,
-                               usingSpringWithDamping: 0.0,
-                               initialSpringVelocity: 0.1,
-                               options: .curveEaseIn,
-                               animations: {
-                                self.layoutIfNeeded()
-                                
-                               },
-                               completion: nil)
-                 */
-           
-                    UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: {
-                        self.layoutIfNeeded()
-                    }, completion: nil)
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: { self.layoutIfNeeded()}, completion: nil)
             }
         }
     }
