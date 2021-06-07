@@ -134,38 +134,7 @@ extension IconViewCell {
     func configureHierarchy() {
         setupContentForStyle(AppState.shared.style)
         
-        //content.text = "abc"
-        //content.textProperties.font = .boldSystemFont(ofSize: 38)
-        //content.textProperties.alignment = .center
-
         iconSize = frame.height * cellFillRatioIcon
-        
-        /*
-        self.backgroundView = {
-            let v = UIView()
-            v.fillSuperview()
-            if IconViewCell.testing {
-                v.backgroundColor = .red
-            } else {
-                v.backgroundColor = .white
-            }
-            v.layer.cornerRadius = 8
-            v.layer.borderWidth = 0.3
-            v.layer.borderColor = UIColor.lightGray.cgColor
-            self.addSubview(v)
-            return v
-        }()*/
-
-        //self.translatesAutoresizingMaskIntoConstraints = false
-        
-        let paddingViewGenerator = {() -> UIView in
-            let p = UIView()
-            p.translatesAutoresizingMaskIntoConstraints = false
-            if IconViewCell.testing {
-                p.backgroundColor = .green
-            }
-            return p
-        }
         
         nameLabel.text = "placeholder"
     
@@ -239,90 +208,70 @@ extension IconViewCell {
         }
     }
     
+    var gridLayoutConstraintsArray: [NSLayoutConstraint]? {
+        get {
+            return self.gridLayoutConstraints.map {
+                return [
+                    $0.alignmentView1Top,
+                    $0.alignmentView1Leading,
+                    $0.alignmentView1Width,
+                    $0.alignmentView1Height,
+                    $0.iconViewTop,
+                    $0.iconViewCenterX,
+                    $0.iconViewWidth,
+                    $0.iconViewHeight,
+                    $0.alignmentView2Top,
+                    $0.alignmentView2Leading,
+                    $0.alignmentView2Width,
+                    $0.alignmentView2Height,
+                    $0.nameLabelTop,
+                    $0.nameLabelLeft,
+                    $0.nameLabelRight,
+                    $0.nameLabelHegith,
+                    $0.nameLabelCenterX]
+            }
+        }
+    }
+    
+    var listLayoutConstraintsArray: [NSLayoutConstraint]? {
+        get {
+            return self.listLayoutConstraints.map {
+                return [
+                    $0.listViewWidth,
+                    $0.listViewLeft,
+                    $0.listViewTop,
+                    $0.listViewBottom,
+                    $0.nameLabelCenterY,
+                    $0.nameLabelLeft,
+                    $0.nameLabelRight
+                ]
+            }
+        }
+    }
+    
     func activateConstraintsForStyle(_ style: DirectoryViewStyle, animated: Bool) {
+        var transformation: (() -> Void)? = nil
         switch style {
         case .icons:
-            let fromListToGrid = { () -> Void in
-
-                self.listLayoutConstraints?.listViewWidth.isActive = false
-                self.listLayoutConstraints?.listViewLeft.isActive = false
-                self.listLayoutConstraints?.listViewTop.isActive = false
-                self.listLayoutConstraints?.listViewBottom.isActive = false
-                self.listLayoutConstraints?.nameLabelCenterY.isActive = false
-                self.listLayoutConstraints?.nameLabelLeft.isActive = false
-                self.listLayoutConstraints?.nameLabelRight.isActive = false
-                
-                self.gridLayoutConstraints.map {
-                    $0.alignmentView1Top.isActive = true
-                    $0.alignmentView1Leading.isActive = true
-                    $0.alignmentView1Width.isActive = true
-                    $0.alignmentView1Height.isActive = true
-                    $0.iconViewTop.isActive = true
-                    $0.iconViewCenterX.isActive = true
-                    $0.iconViewWidth.isActive = true
-                    $0.iconViewHeight.isActive = true
-                    $0.alignmentView2Top.isActive = true
-                    $0.alignmentView2Leading.isActive = true
-                    $0.alignmentView2Width.isActive = true
-                    $0.alignmentView2Height.isActive = true
-                    $0.nameLabelTop.isActive = true
-                    $0.nameLabelLeft.isActive = true
-                    $0.nameLabelRight.isActive = true
-                    $0.nameLabelHegith.isActive = true
-                    $0.nameLabelCenterX.isActive = true
-                }
-                
+            transformation = { () -> Void in
+                self.listLayoutConstraintsArray.map { NSLayoutConstraint.deactivate($0) }
+                self.gridLayoutConstraintsArray.map { NSLayoutConstraint.activate($0) }
                 self.nameLabel.numberOfLines = 2
                 self.nameLabel.textAlignment = .center
- 
             }
-            
-            fromListToGrid()
-            
-            if animated {
-                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: {
-                    self.layoutIfNeeded()
-                }, completion: nil)
-            }
+    
         case .list:
-            
-            let fromGridToListIcon = { () -> Void in
-                self.gridLayoutConstraints.map {
-                    $0.alignmentView1Top.isActive = false
-                    $0.alignmentView1Leading.isActive = false
-                    $0.alignmentView1Width.isActive = false
-                    $0.alignmentView1Height.isActive = false
-                    $0.iconViewTop.isActive = false
-                    $0.iconViewCenterX.isActive = false
-                    $0.iconViewWidth.isActive = false
-                    $0.iconViewHeight.isActive = false
-                    $0.alignmentView2Top.isActive = false
-                    $0.alignmentView2Leading.isActive = false
-                    $0.alignmentView2Width.isActive = false
-                    $0.alignmentView2Height.isActive = false
-                    $0.nameLabelTop.isActive = false
-                    $0.nameLabelLeft.isActive = false
-                    $0.nameLabelRight.isActive = false
-                    $0.nameLabelHegith.isActive = false
-                    $0.nameLabelCenterX.isActive = false
-                }
-                self.listLayoutConstraints?.listViewWidth.isActive = true
-                self.listLayoutConstraints?.listViewLeft.isActive = true
-                self.listLayoutConstraints?.listViewTop.isActive = true
-                self.listLayoutConstraints?.listViewBottom.isActive = true
-                self.listLayoutConstraints?.nameLabelCenterY.isActive = true
-                self.listLayoutConstraints?.nameLabelLeft.isActive = true
-                self.listLayoutConstraints?.nameLabelRight.isActive = true
+            transformation = { () -> Void in
+                self.gridLayoutConstraintsArray.map { NSLayoutConstraint.deactivate($0) }
+                self.listLayoutConstraintsArray.map { NSLayoutConstraint.activate($0) }
                 self.nameLabel.numberOfLines = 1
                 self.nameLabel.textAlignment = .left
-
             }
             
-            fromGridToListIcon()
-            
-            if animated {
-                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: { self.layoutIfNeeded()}, completion: nil)
-            }
+        }
+        transformation.map { $0() }
+        if animated {
+            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: { self.layoutIfNeeded()}, completion: nil)
         }
     }
     
@@ -334,16 +283,13 @@ extension IconViewCell {
             background.strokeColor = .systemGray3
             background.strokeWidth = 1.0 / self.traitCollection.displayScale
             self.backgroundConfiguration = background
-            
             contentConfiguration = nil
             accessories = []
         case .list:
-            var background = UIBackgroundConfiguration.listPlainCell()
+            let background = UIBackgroundConfiguration.listPlainCell()
             self.backgroundConfiguration = background
-
-            var content = self.defaultContentConfiguration()
+            let content = self.defaultContentConfiguration()
             contentConfiguration = content
-            
             if item is Directory {
                 accessories = [.disclosureIndicator()]
             }
