@@ -61,7 +61,7 @@ class IconViewCell: UICollectionViewListCell {
     let nameLabel: UILabel = {
         var l = UILabel()
         l.text = "placehodler"
-        l.font = .systemFont(ofSize: 14)
+        l.font = .systemFont(ofSize: 12)
         l.numberOfLines = 2
         l.textAlignment = .center
         l.lineBreakMode = .byTruncatingMiddle
@@ -259,7 +259,6 @@ extension IconViewCell {
                 self.nameLabel.numberOfLines = 2
                 self.nameLabel.textAlignment = .center
             }
-    
         case .list:
             transformation = { () -> Void in
                 self.gridLayoutConstraintsArray.map { NSLayoutConstraint.deactivate($0) }
@@ -267,7 +266,6 @@ extension IconViewCell {
                 self.nameLabel.numberOfLines = 1
                 self.nameLabel.textAlignment = .left
             }
-            
         }
         transformation.map { $0() }
         if animated {

@@ -20,6 +20,7 @@ class DirectoryViewController: UIViewController {
     let directory: Directory
     
     var toggleButton: UIBarButtonItem!
+    var toggleButtonInternal: UIButton!
     var userButton: UIBarButtonItem!
     var addFileButton: UIBarButtonItem!
     var addDirectoryButton: UIBarButtonItem!
@@ -58,7 +59,7 @@ class DirectoryViewController: UIViewController {
 extension DirectoryViewController {
     
     @objc func onToolbarButtonTap(_ sender: NSObject) {
-        if sender == self.toggleButton {
+        if sender == self.toggleButtonInternal {
             AppState.shared.toggleNextStyle()
         }
     }
@@ -108,11 +109,10 @@ extension DirectoryViewController {
                 topIndexPath.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.centeredVertically, animated: true) }
             }
   
-            toggleButton.image = getAppStateIconImage()
+            toggleButtonInternal.setImage(getAppStateIconImage(), for: .normal)
             
             
 
-            
             /*
             let selectedPaths: [IndexPath]? = directoryCollectionView
                 .indexPathsForSelectedItems?
@@ -270,7 +270,16 @@ extension DirectoryViewController {
             b.image = image
             return b
         }
-        toggleButton = genButtonWithImage(getAppStateIconImage())
+    
+        toggleButtonInternal = UIButton(type: .system)
+        toggleButtonInternal.setImage(getAppStateIconImage(), for: .normal)
+        toggleButtonInternal.addTarget(self, action: #selector(onToolbarButtonTap(_:)), for: .touchUpInside)
+        
+        toggleButton = UIBarButtonItem(customView: toggleButtonInternal)
+        toggleButton.customView?.translatesAutoresizingMaskIntoConstraints = false
+        toggleButton.customView?.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        toggleButton.customView?.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        
         addFileButton = genButtonWithImage(DirectoryViewController.addFileIcon)
         addDirectoryButton = genButtonWithImage(DirectoryViewController.addDirectoryIcon)
         userButton = genButtonWithImage(DirectoryViewController.userIcon)
@@ -298,7 +307,6 @@ extension DirectoryViewController: UICollectionViewDelegate {
             let vc = DirectoryViewController(directory: directory)
             self.navigationController?.pushViewController(vc, animated: true)
         }
-        
     }
 }
 
@@ -309,8 +317,7 @@ fileprivate extension String {
 extension DirectoryViewController {
     static let appStateIcons: [DirectoryViewStyle: UIImage] = [
         .icons: UIImage(systemName: "square.grid.3x2.fill")!,
-        .list: UIImage(systemName: "text.justify")!
-    ]
+        .list: UIImage(systemName: "text.justify")!]
     
     static let addFileIcon = UIImage(systemName: "doc.badge.plus")!
     
