@@ -1,3 +1,3 @@
 My fun `FileExpert` project
 
-![demo](https://lh3.googleusercontent.com/TIrGVWmG-oyt_y3MZBot0VRX6dB2N0vE0dcYvKJDGw9FaaMyMD-OvonFQRdlUAdWd5Hmf2-NawPo1HQtxy5X=w1374-h934)
+![demo](https://drive.google.com/uc?export=view&id=1ujEw7Tg6DNlYhQxM6zI5-yS0kCpnWPPk)
