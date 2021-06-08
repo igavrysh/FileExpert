@@ -181,6 +181,8 @@ extension DirectoryViewController {
         
         let section = NSCollectionLayoutSection(group: group)
         
+        section.contentInsetsReference = .none
+        
         let layout = UICollectionViewCompositionalLayout(section: section)
         
         return layout

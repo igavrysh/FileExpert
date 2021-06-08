@@ -40,13 +40,17 @@ class IconViewCell: UICollectionViewListCell {
                                         nameLabelHegith: NSLayoutConstraint,
                                         nameLabelCenterX: NSLayoutConstraint)?
     
-    private var listLayoutConstraints: (listViewLeft: NSLayoutConstraint,
-                                        listViewTop: NSLayoutConstraint,
-                                        listViewBottom: NSLayoutConstraint,
-                                        listViewWidth: NSLayoutConstraint,
+    private var listLayoutConstraints: (iconViewLeft: NSLayoutConstraint,
+                                        iconViewTop: NSLayoutConstraint,
+                                        iconViewBottom: NSLayoutConstraint,
+                                        iconViewWidth: NSLayoutConstraint,
                                         nameLabelCenterY: NSLayoutConstraint,
                                         nameLabelLeft: NSLayoutConstraint,
-                                        nameLabelRight: NSLayoutConstraint)?
+                                        nameLabelRight: NSLayoutConstraint,
+                                        separatorViewHeight: NSLayoutConstraint,
+                                        separatorViewLeading: NSLayoutConstraint,
+                                        separatorViewTrailing: NSLayoutConstraint,
+                                        separatorViewBottom: NSLayoutConstraint)?
     
     let iconView: UIImageView = {
         var i = UIImageView()
@@ -97,6 +101,16 @@ class IconViewCell: UICollectionViewListCell {
         return v
     }()
     
+    let separatorView: UIView = {
+        var v = UIView()
+        if IconViewCell.testing {
+            v.backgroundColor = .blue
+        } else {
+            v.backgroundColor = .systemGray3
+        }
+        return v
+    }()
+    
     func setIconImage(_ image: UIImage) {
         self.iconView.image = image
     }
@@ -143,6 +157,7 @@ extension IconViewCell {
         alignmentView1.translatesAutoresizingMaskIntoConstraints = false
         alignmentView2.translatesAutoresizingMaskIntoConstraints = false
         alignmentView3.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
         self.translatesAutoresizingMaskIntoConstraints = false
 
         self.addSubview(alignmentView1)
@@ -150,6 +165,7 @@ extension IconViewCell {
         self.addSubview(alignmentView3)
         self.addSubview(iconView)
         self.addSubview(nameLabel)
+        self.addSubview(separatorView)
 
         gridLayoutConstraints = (
             alignmentView1Top: alignmentView1.topAnchor.constraint(equalTo: topAnchor),
@@ -175,13 +191,19 @@ extension IconViewCell {
         )
         
         listLayoutConstraints = (
-            listViewLeft: iconView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 3),
-            listViewTop: iconView.topAnchor.constraint(equalTo: self.topAnchor, constant: 3),
-            listViewBottom: iconView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -3),
-            listViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor),
+            iconViewLeft: iconView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            iconViewTop: iconView.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
+            iconViewBottom: iconView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8),
+            iconViewWidth: iconView.widthAnchor.constraint(equalTo: iconView.heightAnchor),
+            
             nameLabelCenterY: nameLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             nameLabelLeft: nameLabel.leadingAnchor.constraint(equalTo: self.iconView.trailingAnchor, constant: 0),
-            nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -3)
+            nameLabelRight: nameLabel.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -8),
+            
+            separatorViewHeight: separatorView.heightAnchor.constraint(equalToConstant: 0.3),
+            separatorViewLeading: separatorView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            separatorViewTrailing: separatorView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -8),
+            separatorViewBottom: separatorView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         )
                 
         activateConstraintsForStyle(AppState.shared.style, animated: false)
@@ -237,13 +259,17 @@ extension IconViewCell {
         get {
             return self.listLayoutConstraints.map {
                 return [
-                    $0.listViewWidth,
-                    $0.listViewLeft,
-                    $0.listViewTop,
-                    $0.listViewBottom,
+                    $0.iconViewWidth,
+                    $0.iconViewLeft,
+                    $0.iconViewTop,
+                    $0.iconViewBottom,
                     $0.nameLabelCenterY,
                     $0.nameLabelLeft,
-                    $0.nameLabelRight
+                    $0.nameLabelRight,
+                    $0.separatorViewHeight,
+                    $0.separatorViewLeading,
+                    $0.separatorViewTrailing,
+                    $0.separatorViewBottom
                 ]
             }
         }
