@@ -214,19 +214,13 @@ extension IconViewCell {
 
 extension IconViewCell {
     func configureObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleChangeNotification(_:)),
-            name: Store.changeNotification,
-            object: nil)
+        NotificationCenter.default.addObserver(forName: Store.changeNotification, object: nil, queue: OperationQueue.main, using: {n in self.handleChangeNotification(n)})
     }
     
     @objc func handleChangeNotification(_ notification: Notification) {
         if notification.object is AppState {
-            DispatchQueue.main.async {
-                self.setupContentForStyle(AppState.shared.style)
-                self.activateConstraintsForStyle(AppState.shared.style, animated: true)
-            }
+            self.setupContentForStyle(AppState.shared.style)
+            self.activateConstraintsForStyle(AppState.shared.style, animated: true)
         }
     }
     
