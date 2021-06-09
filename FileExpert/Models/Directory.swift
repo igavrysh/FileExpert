@@ -41,7 +41,7 @@ class Directory: Item {
         super.deleted()
     }
     
-    func add(_ item: Item) -> Item {
+    func add<T: Item>(_ item: T) -> T {
         assert(contents.contains { $0 == item } == false)
         contents.append(item)
         sortStrategies[sortType].map { contents.sort(by: $0)}
@@ -54,6 +54,11 @@ class Directory: Item {
         ])
         return item
     }
+    
+    //func addFileNamed(_ name: String) -> File {
+        //let file = File(name: name, id: UUID().uuidString)
+        //self.store.add
+    //}
     
     func reSort(changedItem: Item) -> (oldIndex: Int, newIndex: Int) {
         let oldIndex = contents.firstIndex { $0 == changedItem }!

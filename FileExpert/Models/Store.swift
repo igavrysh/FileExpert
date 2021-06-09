@@ -52,6 +52,11 @@ class Store {
         }
     }
     
+    //func addItem(item: Item) {
+        //self.sheetService.
+        
+    //}
+    
     func save(_ notifying: Item, userInfo: [AnyHashable: Any]) {
         NotificationCenter.default.post(name: Store.changeNotification, object: notifying, userInfo: userInfo)
     }
@@ -96,7 +101,7 @@ class Store {
                 let parentDir = dirs[row.parentId]
                 // if not a root folder as root folder has been added in class init
                 if (row.id != .rootDirectoryId) {
-                    if let dir = parentDir?.add(Directory(name: row.name, id: row.id)) as? Directory {
+                    if let dir = parentDir?.add(Directory(name: row.name, id: row.id)) {
                         dirs[dir.id] = dir
                     }
                     //Thread.sleep(forTimeInterval: 0.1)
