@@ -8,13 +8,15 @@
 import Foundation
 
 class Directory: Item {
-    private(set) var contents: [Item]
-    
-    enum SortType {
-        case nameAsc, directoryFileNameAsc
+    private(set) var contents: [Item] {
+        didSet {
+            for item in contents {
+                item.store = store
+                item.parent = self
+            }
+            contents.sort(by: self.sortStrategy)
+        }
     }
-    
-    private var sortType: SortType
     
     override weak var store: Store? {
         didSet {
@@ -22,10 +24,36 @@ class Directory: Item {
         }
     }
     
+    enum SortType {
+        case nameAsc, directoryFileNameAsc
+    }
+    
+    private var sortType: SortType = .directoryFileNameAsc
+    
+    var sortStrategy: ((_: Item, _: Item) -> Bool) {
+        return sortStrategies[sortType] ?? Directory.nameAscSortStrategy
+    }
+    
+    var sortStrategies: [SortType: ((_: Item, _: Item) -> Bool)] = [
+        .nameAsc: Directory.nameAscSortStrategy,
+        .directoryFileNameAsc: Directory.directoryFileNameAscSortStrategy
+    ]
+    
+    var isRoot: Bool {
+        get {
+            self.store?.rootDirectory === self
+        }
+    }
+    
     override init(name: String, id: String) {
         contents = []
-        sortType = .directoryFileNameAsc
         super.init(name: name, id: id)
+    }
+    
+    init?(name: String, id: String, dict: [String: Any]) {
+        self.contents = Directory.load(jsonContents: dict[.contentsKey])
+        super.init(name: name, id: id)
+        self.contents.forEach { $0.parent = self }
     }
     
     init(name: String, id: String, sortType: SortType) {
@@ -47,11 +75,8 @@ class Directory: Item {
         sortStrategies[sortType].map { contents.sort(by: $0)}
         let newIndex = contents.firstIndex { $0 == item }!
         item.parent = self
-        store?.save(item, userInfo: [
-            Item.changeReasonKey: Item.added,
-            Item.newValueKey: newIndex,
-            Item.parentFolderKey: self
-        ])
+        let userInfo: [AnyHashable: Any] = [Item.changeReasonKey: Item.added, Item.newValueKey: newIndex, Item.parentFolderKey: self]
+        store?.save(item, userInfo: userInfo)
         return item
     }
     
@@ -87,10 +112,29 @@ class Directory: Item {
             .first { $0.id == second }
             .flatMap { $0.item(atIdPath: subseq) }
     }
+
+    override var json: [String: Any] {
+        var result = super.json
+        result[.contentsKey] = contents.map { $0.json }
+        return result
+    }
     
-    var sortStrategies: [SortType: ((_: Item, _: Item) -> Bool)] = [
-        .nameAsc: { $0.name < $1.name },
-        .directoryFileNameAsc: { (item1, item2) -> Bool in
+    static func load(jsonContents: Any?) -> [Item] {
+        return (jsonContents as? Array<Any>)?.compactMap { Item.load(json:$0) } ?? []
+    }
+}
+
+fileprivate extension String {
+    static let contentsKey = "contents"
+}
+
+fileprivate extension Directory {
+    static var nameAscSortStrategy: ((_: Item, _: Item) -> Bool) {
+        return { $0.name < $1.name }
+    }
+    
+    static var directoryFileNameAscSortStrategy: ((_: Item, _: Item) -> Bool) {
+        return { (item1, item2) -> Bool in
             if (item1 is Directory && item2 is Directory)
                 || (item1 is File && item2 is File) {
                 return item1.name < item2.name
@@ -100,14 +144,8 @@ class Directory: Item {
                 } else if item1 is Directory && item2 is File {
                     return true
                 }
-                fatalError("Unexpect file and directory configuration found when trying to sort items")
+                fatalError("Unexpected file and directory configuration found when trying to sort items")
             }
-        }
-    ]
-    
-    var isRoot: Bool {
-        get {
-            self.store?.rootFolder === self
         }
     }
 }

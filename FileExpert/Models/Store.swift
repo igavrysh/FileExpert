@@ -7,25 +7,42 @@
 
 import Foundation
 
+
 class Store {
     
     static let changeNotification = Notification.Name("StoreChanged")
+    static private let documentDirectory = try! FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     
-    static let shared = Store()
+    static let shared = Store(url: documentDirectory)
     
-    private(set) var rootFolder: Directory
+    let localBaseURL: URL
+    
+    var localStoreLocationURL: URL {
+        return localBaseURL.appendingPathComponent(.storeLocation)
+    }
+    
+    private(set) var rootDirectory: Directory!
     
     private var sheetService = SheetService()
     
-    init() {
-        self.rootFolder = Directory(name: .rootDirectoryName, id: .rootDirectoryId)
-        self.rootFolder.store = self
+    init(url: URL) {
+        self.localBaseURL = url
+        self.rootDirectory = readRootDirectory() ?? Directory(name: .rootDirectoryName, id: .rootDirectoryId)
+        self.rootDirectory.store = self
+    }
+    
+    func readRootDirectory() -> Directory? {
+        guard let data = try? Data(contentsOf: localStoreLocationURL),
+              let json = try? JSONSerialization.jsonObject(with: data, options: []),
+              let directory = Item.load(json: json) as? Directory
+        else { return nil }
+        return directory
     }
     
     func load() {
         // TODO: refactor this to a separate service class that will maitain store lifecycle (e.g. initial load, caching and
         // follow up refreshes
-        if rootFolder.contents.count == 0 {
+        if rootDirectory.contents.count == 0 {
             DispatchQueue.global(qos: .background).async { [weak self] in
                 /*
                 let abcFolder = self?.rootFolder.add(Directory(name: "abc", id: "abc"))
@@ -58,11 +75,14 @@ class Store {
     //}
     
     func save(_ notifying: Item, userInfo: [AnyHashable: Any]) {
+        let json = rootDirectory.json
+        let data = try! JSONSerialization.data(withJSONObject: json, options: [])
+        try! data.write(to: localStoreLocationURL)
         NotificationCenter.default.post(name: Store.changeNotification, object: notifying, userInfo: userInfo)
     }
     
     func item(atIdPath path: [String]) -> Item? {
-        return rootFolder.item(atIdPath: path[0...])
+        return rootDirectory.item(atIdPath: path[0...])
     }
     
     func removeFile(for file: File) {
@@ -88,7 +108,7 @@ class Store {
         
         var dirs = [String: Directory]()
         var queue = [SheetRecord(id: .rootDirectoryId, parentId: .rootDirectoryId, type: .sheetRecordTypeDirectory, name: .rootDirectoryName)]
-        dirs[rootFolder.id] = rootFolder
+        dirs[rootDirectory.id] = rootDirectory
         while !queue.isEmpty {
             let row = queue.remove(at: 0)
             if row.type == .sheetRecordTypeFile {
@@ -119,4 +139,5 @@ fileprivate extension String {
     static let rootDirectoryName = ""
     static let sheetRecordTypeDirectory = "d"
     static let sheetRecordTypeFile = "f"
+    static let storeLocation = "store.json"
 }

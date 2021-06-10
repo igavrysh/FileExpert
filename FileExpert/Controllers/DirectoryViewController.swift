@@ -17,10 +17,14 @@ class DirectoryViewController: UIViewController {
         }
     }
     
-    let directory: Directory
+    var directory: Directory = Store.shared.rootDirectory {
+        didSet {
+            //directoryCollectionView.reloadData()
+            setupToolbar()
+        }
+    }
     
     var toggleButton: UIBarButtonItem!
-    //var toggleButtonInternal: UIButton!
     var userButton: UIBarButtonItem!
     var addFileButton: UIBarButtonItem!
     var addDirectoryButton: UIBarButtonItem!
@@ -32,18 +36,10 @@ class DirectoryViewController: UIViewController {
     var directoryCollectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     
-    convenience init() {
-        self.init(directory: Store.shared.rootFolder)
-    }
-    
-    init(directory: Directory) {
-        self.directory = directory
-        super.init(nibName: nil, bundle: nil)
-    }
-    
+    /*
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
+    }*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -266,7 +262,6 @@ extension DirectoryViewController {
             b.image = image
             return b
         }
-        
         toggleButton = genButtonWithImage(getAppStateIconImage())
         addFileButton = genButtonWithImage(DirectoryViewController.addFileIcon)
         addDirectoryButton = genButtonWithImage(DirectoryViewController.addDirectoryIcon)
@@ -295,7 +290,8 @@ extension DirectoryViewController: UICollectionViewDelegate {
         }
         
         if let directory = item as? Directory {
-            let vc = DirectoryViewController(directory: directory)
+            let vc = DirectoryViewController()
+            vc.directory = directory
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

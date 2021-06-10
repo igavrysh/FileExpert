@@ -56,6 +56,23 @@ class Item: Hashable {
         return self
     }
     
+    static func load(json: Any) -> Item? {
+        guard let dict = json as? [String: Any],
+              let name = dict[.nameKey] as? String,
+              let id = dict[.idKey] as? String,
+              let isDirectory = dict[.isDirectoryKey] as? Bool
+        else { return nil }
+        if isDirectory {
+            return Directory(name: name, id: id, dict: dict)
+        } else {
+            return File(name: name, id: id)
+        }
+    }
+    
+    var json: [String: Any] {
+        return [.nameKey: name, .idKey: id, .isDirectoryKey: self is Directory]
+    }
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -73,4 +90,11 @@ extension Item {
     static let renamed = "renamed"
     static let added = "added"
     static let removed = "removed"
+    static let reloaded = "reloaded"
+}
+
+fileprivate extension String {
+    static let nameKey = "name"
+    static let idKey = "id"
+    static let isDirectoryKey = "isDirectory"
 }

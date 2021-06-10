@@ -10,6 +10,7 @@
 		39B577ED5BA373172E894081 /* Pods_FileExpertTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E00EAF6EFF30B676012C6E4C /* Pods_FileExpertTests.framework */; };
 		89DB65A28E1106DFD42C2055 /* Pods_FileExpert.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD801EB45B4220402174144F /* Pods_FileExpert.framework */; };
 		C6FDFE7AEE509E766A47561E /* Pods_FileExpert_FileExpertUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668F847BBF6FA8D03DC5A802 /* Pods_FileExpert_FileExpertUITests.framework */; };
+		D51FAC30267172DD005A5147 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51FAC2F267172DD005A5147 /* Webservice.swift */; };
 		D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A73F3265F712D0050D67C /* AppDelegate.swift */; };
 		D53A73F6265F712D0050D67C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A73F5265F712D0050D67C /* SceneDelegate.swift */; };
 		D53A73F8265F712D0050D67C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A73F7265F712D0050D67C /* ViewController.swift */; };
@@ -60,6 +61,7 @@
 		9052F2C7DDD52501A2DA8558 /* Pods-FileExpert-FileExpertUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FileExpert-FileExpertUITests.release.xcconfig"; path = "Target Support Files/Pods-FileExpert-FileExpertUITests/Pods-FileExpert-FileExpertUITests.release.xcconfig"; sourceTree = "<group>"; };
 		AD801EB45B4220402174144F /* Pods_FileExpert.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FileExpert.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3197F202C06F87074AF7A26 /* Pods-FileExpertTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FileExpertTests.debug.xcconfig"; path = "Target Support Files/Pods-FileExpertTests/Pods-FileExpertTests.debug.xcconfig"; sourceTree = "<group>"; };
+		D51FAC2F267172DD005A5147 /* Webservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
 		D53A73F0265F712D0050D67C /* FileExpert.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FileExpert.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D53A73F3265F712D0050D67C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D53A73F5265F712D0050D67C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -142,6 +144,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D51FAC2E267172C4005A5147 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				D51FAC2F267172DD005A5147 /* Webservice.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		D53A73E7265F712D0050D67C = {
 			isa = PBXGroup;
 			children = (
@@ -167,6 +177,7 @@
 		D53A73F2265F712D0050D67C /* FileExpert */ = {
 			isa = PBXGroup;
 			children = (
+				D51FAC2E267172C4005A5147 /* Network */,
 				D5F2ABE4266E79640079C3D8 /* GoogleService-Info.plist */,
 				D53A7533266139170050D67C /* Helpers */,
 				D53A752A266134030050D67C /* Views */,
@@ -532,6 +543,7 @@
 				D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */,
 				D59FA9692665927600E1BE54 /* Directory.swift in Sources */,
 				D59FA97826661FF800E1BE54 /* DirectoryViewController.swift in Sources */,
+				D51FAC30267172DD005A5147 /* Webservice.swift in Sources */,
 				D59FA9452662B37200E1BE54 /* AppState.swift in Sources */,
 				D53A758B2661BCB10050D67C /* MainViewController.swift in Sources */,
 				D53A754426613A330050D67C /* UIView+Layout.swift in Sources */,
