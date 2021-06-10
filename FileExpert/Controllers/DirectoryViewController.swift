@@ -49,6 +49,10 @@ class DirectoryViewController: UIViewController {
         configureDataSource()
         applyInitialSnapshot()
         Store.shared.load()
+        
+        if let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.path {
+            print(documentsPath)   // "var/folder/.../documents\n" copy the full path
+        }
     }
 }
 
@@ -61,6 +65,10 @@ extension DirectoryViewController {
         
         if sender == self.addFileButton {
             showAddFilePopup()
+        }
+        
+        if sender == self.userButton {
+            showUserPopup()
         }
     }
     
@@ -77,6 +85,10 @@ extension DirectoryViewController {
             textField.placeholder = "Enter file name:"
         })
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func showUserPopup() {
+        self.navigationController?.pushViewController(UserViewController(), animated: true)
     }
 }
 

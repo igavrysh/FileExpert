@@ -10,11 +10,19 @@ import GoogleSignIn
 import Firebase
 import FirebaseFirestoreSwift
 
-class ViewController: UIViewController, GIDSignInDelegate {
+class UserViewController: UIViewController, GIDSignInDelegate {
     
     let gidButton: GIDSignInButton = {
         let b = GIDSignInButton()
         b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }()
+    
+    let logoutButton: UIButton = {
+        let b = UIButton()
+        b.setTitle("Logout", for: .normal)
+        b.backgroundColor = .systemBlue
+        b.addTarget(self, action: #selector(logoutPressed(_:)), for: .touchUpInside)
         return b
     }()
     
@@ -31,16 +39,26 @@ class ViewController: UIViewController, GIDSignInDelegate {
     }
     
     func setupUI() {
-        view.addSubview(gidButton)
-        gidButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        gidButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        view.addSubview(gidButton)
+        
+        var sv = UIStackView(arrangedSubviews: [gidButton, logoutButton])
+        sv.axis = .vertical
+        view.addSubview(sv)
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        sv.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        sv.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        sv.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
+
     }
     
     @objc func googleSignInPressed(_ sender: UIButton?) {
         let alert = UIAlertController(title: "hello", message: "Google Sign In", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func logoutPressed(_ sender: UIButton?) {
+        let url = URL(string: "https://accounts.google.com/Logout")!
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
