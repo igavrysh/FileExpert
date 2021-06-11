@@ -80,10 +80,13 @@ class Directory: Item {
         return item
     }
     
-    //func addFileNamed(_ name: String) -> File {
-        //let file = File(name: name, id: UUID().uuidString)
+    func addFileNamed(_ name: String) -> File {
+        let file = File(name: name, id: UUID().uuidString)
+        file.parent = self
         //self.store.add
-    //}
+        SheetService.shared.addFile(file, completion: nil)
+        return file
+    }
     
     func reSort(changedItem: Item) -> (oldIndex: Int, newIndex: Int) {
         let oldIndex = contents.firstIndex { $0 == changedItem }!

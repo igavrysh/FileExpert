@@ -7,6 +7,7 @@
 
 import UIKit
 import GoogleSignIn
+import GoogleAPIClientForREST
 import Firebase
 
 @main
@@ -24,6 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         
         GIDSignIn.sharedInstance()?.clientID = "421258405956-caqbdhke8c2j7msom2eb9ddh7foln9o4.apps.googleusercontent.com"
+        GIDSignIn.sharedInstance()?.scopes.append(kGTLRAuthScopeSheetsSpreadsheets)
+        GIDSignIn.sharedInstance()?.scopes.append(kGTLRAuthScopeSheetsDrive)
         GIDSignIn.sharedInstance()
         
         // Override point for customization after application launch.

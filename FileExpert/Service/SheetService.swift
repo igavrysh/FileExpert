@@ -7,6 +7,7 @@
 
 import GoogleSignIn
 import GoogleAPIClientForREST
+import GTMSessionFetcher
 
 class SheetService {
     
@@ -20,6 +21,8 @@ class SheetService {
     
     func fetchSheet(completion: @escaping (Sheet?, Error?) -> ()) {
         var sheet = Sheet()
+        
+        let queryText = GTLRSheetsQuery_SpreadsheetsValuesBatchGetByDataFilter(
         
         let query = GTLRSheetsQuery_SpreadsheetsValuesGet
             .query(
@@ -58,38 +61,40 @@ class SheetService {
             }
         }
     }
-    /*
-    func addFile(_ file: File, completion: @escaping (Sheet?, Error?) -> ()) {
+    
+    func addFile(_ file: File, completion: ((Sheet?, Error?) -> ())?) {
         guard let directory = file.parent else {
-            completion(nil, self.errorWithDesc("Incorrect File entity, missing File Directory"))
+            completion?(nil, self.errorWithDesc("Incorrect File entity, missing File Directory"))
             return
         }
         let valueRange = GTLRSheets_ValueRange.init();
         valueRange.values = [
             [file.id, directory.id, "f", file.name]
         ]
+        
         let query = GTLRSheetsQuery_SpreadsheetsValuesAppend.query(
             withObject: valueRange,
             spreadsheetId: SheetService.SREADSHEET_ID,
             range: SheetService.RANGE
         )
-        
+        query.valueInputOption = kGTLRSheetsValueInputOptionUserEntered
+        service.authorizer = GIDSignIn.sharedInstance().currentUser.authentication.fetcherAuthorizer()
         service.executeQuery(query) { (ticket, result, error) in
             if let error = error {
-                completion(nil, error)
+                completion?(nil, error)
                 return
             }
             
             guard let valueRange = result as? GTLRSheets_ValueRange,
                   let rows = valueRange.values as? [[String]]
             else {
-                completion(nil, self.errorWithDesc("Incorrect spreadsheet format"))
+                completion?(nil, self.errorWithDesc("Incorrect spreadsheet format"))
                 return
             }
             
-            completion(nil, nil)
+            completion?(nil, nil)
         }
-    }*/
+    }
     
     private func errorWithDesc(_ desc: String) -> Error {
         return NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: desc]) as Error

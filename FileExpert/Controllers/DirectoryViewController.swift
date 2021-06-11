@@ -79,7 +79,7 @@ extension DirectoryViewController {
             _ = alert.textFields
                 .flatMap { $0.first }
                 .flatMap { $0.text }
-                //.map { self.directory.addFileNamed($0) }
+                .map { self.directory.addFileNamed($0) }
         })
         alert.addTextField(configurationHandler: {(textField: UITextField!) in
             textField.placeholder = "Enter file name:"
