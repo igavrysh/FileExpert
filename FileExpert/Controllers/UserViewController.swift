@@ -39,15 +39,13 @@ class UserViewController: UIViewController, GIDSignInDelegate {
     }
     
     func setupUI() {
-        
-        var sv = UIStackView(arrangedSubviews: [gidButton, logoutButton])
+        let sv = UIStackView(arrangedSubviews: [gidButton, logoutButton])
         sv.axis = .vertical
         view.addSubview(sv)
         sv.translatesAutoresizingMaskIntoConstraints = false
         sv.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         sv.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         sv.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
-
     }
     
     @objc func googleSignInPressed(_ sender: UIButton?) {

@@ -9,9 +9,9 @@ import GoogleSignIn
 import GoogleAPIClientForREST
 import GTMSessionFetcher
 
-class SheetService {
+class SpreadsheetService {
     
-    static let shared = SheetService()
+    static let shared = SpreadsheetService()
     
     private static let SREADSHEET_ID = "1rcSWbPMhxGrDCAmge9x8Yr7k8wHVijP1jsiEZpv_Bfk"
     private static let RANGE = "Sheet1"
@@ -19,17 +19,65 @@ class SheetService {
     
     private let service = GTLRSheetsService()
     
+    func load<A>(_ resource: Resource<A>, completion: @escaping (Result<A>) -> ()) -> NetworkTask {
+        let query = GTLRSheetsQuery_SpreadsheetsValuesGet
+            .query(
+                withSpreadsheetId: SpreadsheetService.SREADSHEET_ID,
+                range: SpreadsheetService.RANGE)
+        service.apiKey = SpreadsheetService.API_KEY
+
+        let t = service.executeQuery(query) { (ticket, result, error) in
+            DispatchQueue.global(qos: .background).async {
+                if let e = error {
+                    DispatchQueue.main.async {
+                        completion(.error(e))
+                    }
+                    return
+                }
+                
+                guard let valueRange = result as? GTLRSheets_ValueRange,
+                      let rows = valueRange.values as? [[String]]
+                else {
+                    DispatchQueue.main.async {
+                        completion(.error(self.errorWithDesc("Incorrect spreadsheet format")))
+                    }
+                    return
+                }
+                
+                var jsonArray: [[String: Any]] = []
+                for row in rows {
+                    // load only those items that are attached to current folder
+                    // TODO: review this logic and adjust when switched to prod level API
+                    if resource.id == row[1] {
+                        if (row.count != 4) {
+                            completion(.error(self.errorWithDesc("Error: incorrect spreadsheet format")))
+                            return
+                        } else {
+                            let json: [String: Any] = [Item.idKey: row[0], Item.nameKey: row[3], Item.isDirectoryKey: row[2] == "d", Item.parentFolderKey: row[1]]
+                            jsonArray.append(json)
+                        }
+                    }
+                }
+                let d = try! JSONSerialization.data(withJSONObject: jsonArray, options: [])
+                DispatchQueue.main.async {
+                    completion(resource.parseResult(d))
+                }
+            }
+        }
+        return SpreadsheetNetworkTask(with: t)
+    }
+    
     func fetchSheet(completion: @escaping (Sheet?, Error?) -> ()) {
         var sheet = Sheet()
         
-        let queryText = GTLRSheetsQuery_SpreadsheetsValuesBatchGetByDataFilter(
+        //let queryText = GTLRSheetsQuery_SpreadsheetsValuesBatchGetByDataFilter(
         
         let query = GTLRSheetsQuery_SpreadsheetsValuesGet
             .query(
-                withSpreadsheetId: SheetService.SREADSHEET_ID,
-                range: SheetService.RANGE)
+                withSpreadsheetId: SpreadsheetService.SREADSHEET_ID,
+                range: SpreadsheetService.RANGE)
         
-        service.apiKey = SheetService.API_KEY
+        service.apiKey = SpreadsheetService.API_KEY
         
         service.executeQuery(query) { (ticket, result, error) in
             DispatchQueue.global(qos: .background).async {
@@ -74,8 +122,8 @@ class SheetService {
         
         let query = GTLRSheetsQuery_SpreadsheetsValuesAppend.query(
             withObject: valueRange,
-            spreadsheetId: SheetService.SREADSHEET_ID,
-            range: SheetService.RANGE
+            spreadsheetId: SpreadsheetService.SREADSHEET_ID,
+            range: SpreadsheetService.RANGE
         )
         query.valueInputOption = kGTLRSheetsValueInputOptionUserEntered
         service.authorizer = GIDSignIn.sharedInstance().currentUser.authentication.fetcherAuthorizer()

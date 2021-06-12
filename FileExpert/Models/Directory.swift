@@ -8,7 +8,7 @@
 import Foundation
 
 class Directory: Item {
-    private(set) var contents: [Item] {
+    var contents: [Item] {
         didSet {
             for item in contents {
                 item.store = store
@@ -84,7 +84,7 @@ class Directory: Item {
         let file = File(name: name, id: UUID().uuidString)
         file.parent = self
         //self.store.add
-        SheetService.shared.addFile(file, completion: nil)
+        SpreadsheetService.shared.addFile(file, completion: nil)
         return file
     }
     

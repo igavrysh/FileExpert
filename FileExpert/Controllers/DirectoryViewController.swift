@@ -29,6 +29,8 @@ class DirectoryViewController: UIViewController {
     var addFileButton: UIBarButtonItem!
     var addDirectoryButton: UIBarButtonItem!
     
+    var task: NetworkTask?
+    
     enum Section: CaseIterable {
         case main
     }
@@ -48,10 +50,18 @@ class DirectoryViewController: UIViewController {
         configureHierarchy()
         configureDataSource()
         applyInitialSnapshot()
-        Store.shared.load()
-        
+        reload()
+
         if let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.path {
             print(documentsPath)   // "var/folder/.../documents\n" copy the full path
+        }
+    }
+    
+    @objc func reload() {
+        task?.cancel()
+        directoryCollectionView.refreshControl?.beginRefreshing()
+        task = directory.loadContents { [weak self] in
+            self?.directoryCollectionView.refreshControl?.endRefreshing()
         }
     }
 }
@@ -104,7 +114,7 @@ extension DirectoryViewController {
         if let f = notification.object as? File, f.parent === directory {
             self.applySnapshot()
         }
-        if let d = notification.object as? Directory, d.parent === directory {
+        if let d = notification.object as? Directory, d === directory || d.parent == directory  {
             self.applySnapshot()
         }
         

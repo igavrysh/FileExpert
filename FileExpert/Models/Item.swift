@@ -58,9 +58,9 @@ class Item: Hashable {
     
     static func load(json: Any) -> Item? {
         guard let dict = json as? [String: Any],
-              let name = dict[.nameKey] as? String,
-              let id = dict[.idKey] as? String,
-              let isDirectory = dict[.isDirectoryKey] as? Bool
+              let name = dict[Item.nameKey] as? String,
+              let id = dict[Item.idKey] as? String,
+              let isDirectory = dict[Item.isDirectoryKey] as? Bool
         else { return nil }
         if isDirectory {
             return Directory(name: name, id: id, dict: dict)
@@ -70,7 +70,7 @@ class Item: Hashable {
     }
     
     var json: [String: Any] {
-        return [.nameKey: name, .idKey: id, .isDirectoryKey: self is Directory]
+        return [Item.nameKey: name, Item.idKey: id, Item.isDirectoryKey: self is Directory]
     }
     
     func hash(into hasher: inout Hasher) {
@@ -91,10 +91,10 @@ extension Item {
     static let added = "added"
     static let removed = "removed"
     static let reloaded = "reloaded"
-}
-
-fileprivate extension String {
+    
+    
     static let nameKey = "name"
     static let idKey = "id"
     static let isDirectoryKey = "isDirectory"
 }
+

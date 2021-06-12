@@ -18,7 +18,7 @@
 		D53A7400265F712E0050D67C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D53A73FE265F712E0050D67C /* LaunchScreen.storyboard */; };
 		D53A740B265F712F0050D67C /* FileExpertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A740A265F712F0050D67C /* FileExpertTests.swift */; };
 		D53A7416265F712F0050D67C /* FileExpertUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7415265F712F0050D67C /* FileExpertUITests.swift */; };
-		D53A746E265F87260050D67C /* SheetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A746D265F87260050D67C /* SheetService.swift */; };
+		D53A746E265F87260050D67C /* SpreadsheetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A746D265F87260050D67C /* SpreadsheetService.swift */; };
 		D53A751B2660471E0050D67C /* Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A751A2660471E0050D67C /* Sheet.swift */; };
 		D53A752C266134290050D67C /* IconViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A752B266134280050D67C /* IconViewCell.swift */; };
 		D53A7535266139270050D67C /* VerticalStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A7534266139270050D67C /* VerticalStackView.swift */; };
@@ -26,6 +26,10 @@
 		D53A753F26613A1A0050D67C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A753E26613A1A0050D67C /* Extensions.swift */; };
 		D53A754426613A330050D67C /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A754326613A330050D67C /* UIView+Layout.swift */; };
 		D53A758B2661BCB10050D67C /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53A758A2661BCB00050D67C /* MainViewController.swift */; };
+		D53D12BE2673D6B600BAD90E /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53D12BD2673D6B600BAD90E /* Resources.swift */; };
+		D53D12C72673D73000BAD90E /* NetworkTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53D12C62673D73000BAD90E /* NetworkTask.swift */; };
+		D53D12CC2673D7F900BAD90E /* TinyNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53D12CB2673D7F900BAD90E /* TinyNetworking.swift */; };
+		D53D12D12673D89C00BAD90E /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53D12D02673D89C00BAD90E /* Result.swift */; };
 		D59FA9452662B37200E1BE54 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA9442662B37200E1BE54 /* AppState.swift */; };
 		D59FA95F2665910400E1BE54 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA95E2665910400E1BE54 /* Item.swift */; };
 		D59FA964266591CD00E1BE54 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59FA963266591CD00E1BE54 /* Store.swift */; };
@@ -75,7 +79,7 @@
 		D53A7411265F712F0050D67C /* FileExpertUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FileExpertUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D53A7415265F712F0050D67C /* FileExpertUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExpertUITests.swift; sourceTree = "<group>"; };
 		D53A7417265F712F0050D67C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D53A746D265F87260050D67C /* SheetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetService.swift; sourceTree = "<group>"; };
+		D53A746D265F87260050D67C /* SpreadsheetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadsheetService.swift; sourceTree = "<group>"; };
 		D53A751A2660471E0050D67C /* Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheet.swift; sourceTree = "<group>"; };
 		D53A752B266134280050D67C /* IconViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconViewCell.swift; sourceTree = "<group>"; };
 		D53A7534266139270050D67C /* VerticalStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalStackView.swift; sourceTree = "<group>"; };
@@ -83,6 +87,10 @@
 		D53A753E26613A1A0050D67C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D53A754326613A330050D67C /* UIView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		D53A758A2661BCB00050D67C /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		D53D12BD2673D6B600BAD90E /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
+		D53D12C62673D73000BAD90E /* NetworkTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTask.swift; sourceTree = "<group>"; };
+		D53D12CB2673D7F900BAD90E /* TinyNetworking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinyNetworking.swift; sourceTree = "<group>"; };
+		D53D12D02673D89C00BAD90E /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		D59FA9442662B37200E1BE54 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D59FA95E2665910400E1BE54 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		D59FA963266591CD00E1BE54 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
@@ -147,7 +155,10 @@
 		D51FAC2E267172C4005A5147 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				D53A746D265F87260050D67C /* SpreadsheetService.swift */,
 				D51FAC2F267172DD005A5147 /* Webservice.swift */,
+				D53D12BD2673D6B600BAD90E /* Resources.swift */,
+				D53D12C62673D73000BAD90E /* NetworkTask.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -183,7 +194,6 @@
 				D53A752A266134030050D67C /* Views */,
 				D53A74CC26601E360050D67C /* Controllers */,
 				D53A7484265FDFD70050D67C /* Models */,
-				D53A746C265F870D0050D67C /* Service */,
 				D53A73F3265F712D0050D67C /* AppDelegate.swift */,
 				D53A73F5265F712D0050D67C /* SceneDelegate.swift */,
 				D53A73FC265F712E0050D67C /* Assets.xcassets */,
@@ -209,14 +219,6 @@
 				D53A7417265F712F0050D67C /* Info.plist */,
 			);
 			path = FileExpertUITests;
-			sourceTree = "<group>";
-		};
-		D53A746C265F870D0050D67C /* Service */ = {
-			isa = PBXGroup;
-			children = (
-				D53A746D265F87260050D67C /* SheetService.swift */,
-			);
-			path = Service;
 			sourceTree = "<group>";
 		};
 		D53A7484265FDFD70050D67C /* Models */ = {
@@ -257,6 +259,8 @@
 				D53A7539266139A30050D67C /* HorizontalStackView.swift */,
 				D53A753E26613A1A0050D67C /* Extensions.swift */,
 				D53A754326613A330050D67C /* UIView+Layout.swift */,
+				D53D12CB2673D7F900BAD90E /* TinyNetworking.swift */,
+				D53D12D02673D89C00BAD90E /* Result.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -536,15 +540,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				D53A751B2660471E0050D67C /* Sheet.swift in Sources */,
-				D53A746E265F87260050D67C /* SheetService.swift in Sources */,
+				D53D12C72673D73000BAD90E /* NetworkTask.swift in Sources */,
+				D53A746E265F87260050D67C /* SpreadsheetService.swift in Sources */,
 				D59FA964266591CD00E1BE54 /* Store.swift in Sources */,
 				D59FA95F2665910400E1BE54 /* Item.swift in Sources */,
+				D53D12BE2673D6B600BAD90E /* Resources.swift in Sources */,
 				D53A73F8265F712D0050D67C /* UserViewController.swift in Sources */,
 				D53A73F4265F712D0050D67C /* AppDelegate.swift in Sources */,
 				D59FA9692665927600E1BE54 /* Directory.swift in Sources */,
 				D59FA97826661FF800E1BE54 /* DirectoryViewController.swift in Sources */,
+				D53D12D12673D89C00BAD90E /* Result.swift in Sources */,
 				D51FAC30267172DD005A5147 /* Webservice.swift in Sources */,
 				D59FA9452662B37200E1BE54 /* AppState.swift in Sources */,
+				D53D12CC2673D7F900BAD90E /* TinyNetworking.swift in Sources */,
 				D53A758B2661BCB10050D67C /* MainViewController.swift in Sources */,
 				D53A754426613A330050D67C /* UIView+Layout.swift in Sources */,
 				D53A753F26613A1A0050D67C /* Extensions.swift in Sources */,
