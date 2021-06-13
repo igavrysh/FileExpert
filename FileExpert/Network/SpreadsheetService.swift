@@ -67,58 +67,18 @@ class SpreadsheetService {
         return SpreadsheetNetworkTask(with: t)
     }
     
-    func fetchSheet(completion: @escaping (Sheet?, Error?) -> ()) {
-        var sheet = Sheet()
-        
-        //let queryText = GTLRSheetsQuery_SpreadsheetsValuesBatchGetByDataFilter(
-        
-        let query = GTLRSheetsQuery_SpreadsheetsValuesGet
-            .query(
-                withSpreadsheetId: SpreadsheetService.SREADSHEET_ID,
-                range: SpreadsheetService.RANGE)
-        
-        service.apiKey = SpreadsheetService.API_KEY
-        
-        service.executeQuery(query) { (ticket, result, error) in
-            DispatchQueue.global(qos: .background).async {
-                if let error = error {
-                    completion(nil, error)
-                    return
-                }
-                
-                guard let valueRange = result as? GTLRSheets_ValueRange,
-                      let rows = valueRange.values as? [[String]]
-                else {
-                    completion(nil, self.errorWithDesc("Incorrect spreadsheet format"))
-                    return
-                }
-                
-                var error: Error?
-                for row in rows {
-                    if (row.count != 4) {
-                        error = self.errorWithDesc("Error: incorrect spreadsheet format")
-                    } else {
-                        sheet.rows.append(SheetRecord(
-                                            id: row[0],
-                                            parentId: row[1],
-                                            type: row[2],
-                                            name: row[3]))
-                    }
-                }
-                completion(sheet, error)
-            }
+    func addItem(_ item: Item, completion: @escaping (Result<Item>) -> ()) -> NetworkTask {
+        guard let directory = item.parent else {
+            fatalError("Incorrect File entity, missing File Directory")
         }
-    }
-    
-    func addFile(_ file: File, completion: ((Sheet?, Error?) -> ())?) {
-        guard let directory = file.parent else {
-            completion?(nil, self.errorWithDesc("Incorrect File entity, missing File Directory"))
-            return
-        }
+        
         let valueRange = GTLRSheets_ValueRange.init();
-        valueRange.values = [
-            [file.id, directory.id, "f", file.name]
-        ]
+        
+        if item is File {
+            valueRange.values = [[item.id, directory.id, "f", item.name]]
+        } else {
+            valueRange.values = [[item.id, directory.id, "d", item.name]]
+        }
         
         let query = GTLRSheetsQuery_SpreadsheetsValuesAppend.query(
             withObject: valueRange,
@@ -127,21 +87,22 @@ class SpreadsheetService {
         )
         query.valueInputOption = kGTLRSheetsValueInputOptionUserEntered
         service.authorizer = GIDSignIn.sharedInstance().currentUser.authentication.fetcherAuthorizer()
-        service.executeQuery(query) { (ticket, result, error) in
-            if let error = error {
-                completion?(nil, error)
+        let t = service.executeQuery(query) { (ticket, result, error) in
+            if let e = error {
+                completion(.error(e))
                 return
             }
             
             guard let valueRange = result as? GTLRSheets_ValueRange,
                   let rows = valueRange.values as? [[String]]
             else {
-                completion?(nil, self.errorWithDesc("Incorrect spreadsheet format"))
+                completion(.error(self.errorWithDesc("Incorrect spreadsheet format")))
                 return
             }
             
-            completion?(nil, nil)
+            completion(.success(item))
         }
+        return  SpreadsheetNetworkTask(with: t)
     }
     
     private func errorWithDesc(_ desc: String) -> Error {

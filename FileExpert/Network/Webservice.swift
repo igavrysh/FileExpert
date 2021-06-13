@@ -14,12 +14,29 @@ final class Webservice {
         didSet { saveQueue() }
     }
     
+    static private let documentDirectory = try! FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    static private let queueURL = Webservice.documentDirectory.appendingPathComponent("queue.json")
+    
     init(store: Store) {
         self.store = store
+        NotificationCenter.default.addObserver(self, selector: #selector(storeDidChange(_:)), name: Store.changeNotification, object: nil)
     }
     
     func saveQueue() {
         fatalError("not implemented")
+    }
+    
+    @objc func storeDidChange(_ note: Notification) {
+        guard let pending = PendingItem(note) else { return }
+        pendingItems.append(pending)
+        processChanges()
+    }
+    
+    func processChanges() {
+        guard !processing, let pending = pendingItems.first else { return }
+        processing = true
+        
+        //pending.
     }
 }
 

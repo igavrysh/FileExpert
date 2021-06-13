@@ -188,12 +188,12 @@
 		D53A73F2265F712D0050D67C /* FileExpert */ = {
 			isa = PBXGroup;
 			children = (
-				D51FAC2E267172C4005A5147 /* Network */,
-				D5F2ABE4266E79640079C3D8 /* GoogleService-Info.plist */,
 				D53A7533266139170050D67C /* Helpers */,
-				D53A752A266134030050D67C /* Views */,
-				D53A74CC26601E360050D67C /* Controllers */,
+				D51FAC2E267172C4005A5147 /* Network */,
 				D53A7484265FDFD70050D67C /* Models */,
+				D5F2ABE4266E79640079C3D8 /* GoogleService-Info.plist */,
+				D53A74CC26601E360050D67C /* Controllers */,
+				D53A752A266134030050D67C /* Views */,
 				D53A73F3265F712D0050D67C /* AppDelegate.swift */,
 				D53A73F5265F712D0050D67C /* SceneDelegate.swift */,
 				D53A73FC265F712E0050D67C /* Assets.xcassets */,

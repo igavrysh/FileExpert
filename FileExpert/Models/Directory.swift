@@ -81,11 +81,11 @@ class Directory: Item {
     }
     
     func addFileNamed(_ name: String) -> File {
-        let file = File(name: name, id: UUID().uuidString)
-        file.parent = self
-        //self.store.add
-        SpreadsheetService.shared.addFile(file, completion: nil)
-        return file
+        return add(File(name: name, id: UUID().uuidString))
+    }
+    
+    func addDirectoryNamed(_ name: String) -> Directory {
+        return add(Directory(name: name, id: UUID().uuidString))
     }
     
     func reSort(changedItem: Item) -> (oldIndex: Int, newIndex: Int) {

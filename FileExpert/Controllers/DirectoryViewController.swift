@@ -77,6 +77,10 @@ extension DirectoryViewController {
             showAddFilePopup()
         }
         
+        if sender == self.addDirectoryButton {
+            showAddDirectoryPopup()
+        }
+        
         if sender == self.userButton {
             showUserPopup()
         }
@@ -93,6 +97,21 @@ extension DirectoryViewController {
         })
         alert.addTextField(configurationHandler: {(textField: UITextField!) in
             textField.placeholder = "Enter file name:"
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func showAddDirectoryPopup() {
+        let alert = UIAlertController(title: "Add Directory", message: nil, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Add", style: UIAlertAction.Style.default) { action in
+            _ = alert.textFields
+                .flatMap { $0.first }
+                .flatMap { $0.text }
+                .map { self.directory.addDirectoryNamed($0) }
+        })
+        alert.addTextField(configurationHandler: {(textField: UITextField!) in
+            textField.placeholder = "Enter directory name:"
         })
         self.present(alert, animated: true, completion: nil)
     }
