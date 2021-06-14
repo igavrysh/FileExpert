@@ -36,7 +36,10 @@ final class Webservice {
         guard !processing, let pending = pendingItems.first else { return }
         processing = true
         
-        //pending.
+        if pending.change == .create {
+            //SpreadsheetService.shared.addItem(pending, completion: <#T##(Result<Item>) -> ()#>)
+        }
+        
     }
 }
 
@@ -83,6 +86,7 @@ extension PendingItem {
         let idPath = parent.idPath + [item.id]
         self.init(change: change, idPath: idPath, name: item.name, isDirectory: item is Directory)
     }
+    
 }
 
 enum ChangeError: String, Error {

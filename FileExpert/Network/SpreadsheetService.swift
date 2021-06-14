@@ -19,7 +19,7 @@ class SpreadsheetService {
     
     private let service = GTLRSheetsService()
     
-    func load<A>(_ resource: Resource<A>, completion: @escaping (Result<A>) -> ()) -> NetworkTask {
+    func loadRecords(_ completion: @escaping (Result<[SheetRecord]>) -> ()) -> NetworkTask {
         let query = GTLRSheetsQuery_SpreadsheetsValuesGet
             .query(
                 withSpreadsheetId: SpreadsheetService.SREADSHEET_ID,
@@ -44,30 +44,33 @@ class SpreadsheetService {
                     return
                 }
                 
-                var jsonArray: [[String: Any]] = []
+                var sheetRecrods: [SheetRecord] = []
                 for row in rows {
                     // load only those items that are attached to current folder
                     // TODO: review this logic and adjust when switched to prod level API
-                    if resource.id == row[1] {
-                        if (row.count != 4) {
-                            completion(.error(self.errorWithDesc("Error: incorrect spreadsheet format")))
-                            return
-                        } else {
-                            let json: [String: Any] = [Item.idKey: row[0], Item.nameKey: row[3], Item.isDirectoryKey: row[2] == "d", Item.parentFolderKey: row[1]]
-                            jsonArray.append(json)
+                    if (row.count != 4) {
+                        completion(.error(self.errorWithDesc("Error: incorrect spreadsheet format")))
+                        return
+                    } else {
+                        var isDirectory = false
+                        if row[2] == "d" {
+                            isDirectory = true
                         }
+                        
+                        sheetRecrods.append(SheetRecord(id: row[0], parentId: row[1], isDirectory: isDirectory, name: row[3]))
                     }
                 }
-                let d = try! JSONSerialization.data(withJSONObject: jsonArray, options: [])
                 DispatchQueue.main.async {
-                    completion(resource.parseResult(d))
+                    completion(.success(sheetRecrods))
                 }
             }
         }
         return SpreadsheetNetworkTask(with: t)
     }
     
-    func addItem(_ item: Item, completion: @escaping (Result<Item>) -> ()) -> NetworkTask {
+    /*
+    
+    func addItem(_ sheetRecord: SheetRecord, completion: @escaping (Result<SheetRecord>) -> ()) -> NetworkTask {
         guard let directory = item.parent else {
             fatalError("Incorrect File entity, missing File Directory")
         }
@@ -104,6 +107,7 @@ class SpreadsheetService {
         }
         return  SpreadsheetNetworkTask(with: t)
     }
+ */
     
     private func errorWithDesc(_ desc: String) -> Error {
         return NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: desc]) as Error

@@ -155,6 +155,7 @@
 		D51FAC2E267172C4005A5147 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				D53A751A2660471E0050D67C /* Sheet.swift */,
 				D53A746D265F87260050D67C /* SpreadsheetService.swift */,
 				D51FAC2F267172DD005A5147 /* Webservice.swift */,
 				D53D12BD2673D6B600BAD90E /* Resources.swift */,
@@ -225,7 +226,6 @@
 			isa = PBXGroup;
 			children = (
 				D59FA9442662B37200E1BE54 /* AppState.swift */,
-				D53A751A2660471E0050D67C /* Sheet.swift */,
 				D59FA95E2665910400E1BE54 /* Item.swift */,
 				D59FA963266591CD00E1BE54 /* Store.swift */,
 				D59FA9682665927600E1BE54 /* Directory.swift */,
