@@ -27,7 +27,14 @@ extension Directory {
         // Re-apply old contents to new folders
         let merged =  records
             .filter { $0.parentId == self.id }
-            .map { $0.isDirectory ? Directory(name: $0.name, id: $0.id) : File(name: $0.name, id: $0.id) }
+            .map { r in
+                switch r.type {
+                case .directory:
+                    return Directory(name: r.name, id: r.id)
+                case .file:
+                    return File(name: r.name, id: r.id)
+                }
+            }
             .map { (item: Item) -> Item in
                 if let d = item as? Directory,
                    let oldContents = (self.contents.first(where: { d.id == $0.id }) as? Directory)?.contents {

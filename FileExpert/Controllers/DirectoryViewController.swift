@@ -123,7 +123,7 @@ extension DirectoryViewController {
 
 extension DirectoryViewController {
     func configureObserver() {
-        NotificationCenter.default.addObserver(forName: Store.changeNotification,
+        NotificationCenter.default.addObserver(forName: Store.changedNotification,
                                                object: nil,
                                                queue: OperationQueue.main,
                                                using: { n in self.handleChangeNotification(n)})

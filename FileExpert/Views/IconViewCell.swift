@@ -214,7 +214,7 @@ extension IconViewCell {
 
 extension IconViewCell {
     func configureObserver() {
-        NotificationCenter.default.addObserver(forName: Store.changeNotification, object: nil, queue: OperationQueue.main, using: {n in self.handleChangeNotification(n)})
+        NotificationCenter.default.addObserver(forName: Store.changedNotification, object: nil, queue: OperationQueue.main, using: {n in self.handleChangeNotification(n)})
     }
     
     @objc func handleChangeNotification(_ notification: Notification) {

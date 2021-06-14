@@ -27,7 +27,7 @@ class AppState {
     func toggleNextStyle() {
         let prevStyle = self.style
         self.styleInternal = getNextStyle()
-        NotificationCenter.default.post(name: Store.changeNotification, object: self, userInfo: [
+        NotificationCenter.default.post(name: Store.changedNotification, object: self, userInfo: [
                                             AppState.previousStyle: prevStyle,
                                             AppState.style: self.style])
     }

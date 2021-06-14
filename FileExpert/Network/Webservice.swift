@@ -5,7 +5,7 @@
 //  Created by new on 6/9/21.
 //
 
-import Foundation
+import UIKit
 
 final class Webservice {
     private var processing = false
@@ -19,11 +19,23 @@ final class Webservice {
     
     init(store: Store) {
         self.store = store
-        NotificationCenter.default.addObserver(self, selector: #selector(storeDidChange(_:)), name: Store.changeNotification, object: nil)
+        loadQueue()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(storeDidChange(_:)), name: Store.changedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
-    func saveQueue() {
-        fatalError("not implemented")
+    private func loadQueue() {
+        guard let data = try? Data(contentsOf: Webservice.queueURL) else { return }
+        pendingItems = try! JSONDecoder().decode([PendingItem].self, from: data)
+    }
+    
+    private func saveQueue() {
+        try! JSONEncoder().encode(pendingItems).write(to: Webservice.queueURL)
+    }
+    
+    @objc func didBecomeActive() {
+        processChanges()
     }
     
     @objc func storeDidChange(_ note: Notification) {
@@ -37,7 +49,27 @@ final class Webservice {
         processing = true
         
         if pending.change == .create {
-            //SpreadsheetService.shared.addItem(pending, completion: <#T##(Result<Item>) -> ()#>)
+            if let id = pending.idPath.last,
+               pending.idPath.count >= 2 {
+                let parentId = pending.idPath[pending.idPath.count - 2]
+                let sr = SheetRecord(id: id, parentId: parentId, type: pending.isDirectory ? .directory : .file, name: pending.name)
+                SpreadsheetService.shared.addRecord(sr) {[weak self] result in
+                    guard let s = self else { return }
+                    s.processing = false
+                    s.pendingItems.removeFirst()
+                    if let item = s.store.item(atIdPath: pending.idPath),
+                       let parent = item.parent,
+                       let index = parent.contents.firstIndex(where: { $0 === item })
+                    {
+                        NotificationCenter.default.post(name: Store.changedNotification, object: item, userInfo: [
+                            Item.changeReasonKey: Item.reloaded,
+                            Item.oldValueKey: index,
+                            Item.newValueKey: index,
+                            Item.parentFolderKey: parent
+                        ])
+                    }
+                }
+            }
         }
         
     }

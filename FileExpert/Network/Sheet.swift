@@ -15,16 +15,23 @@ struct Sheet {
     }
 }
 
+enum SheetRecordType: String {
+    case file = "f"
+    case directory = "d"
+}
+
 struct SheetRecord: Hashable {
     let id: String
     let parentId: String
-    let isDirectory: Bool
+    let type: SheetRecordType
     let name: String
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(parentId)
-        hasher.combine(isDirectory)
+        hasher.combine(type)
         hasher.combine(name)
     }
 }
+
+

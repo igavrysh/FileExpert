@@ -10,10 +10,12 @@ import Foundation
 
 class Store {
     
-    static let changeNotification = Notification.Name("StoreChanged")
+    static let changedNotification = Notification.Name("StoreChanged")
     static private let documentDirectory = try! FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     
     static let shared = Store(url: documentDirectory)
+    
+    private var webservice: Webservice!
     
     let localBaseURL: URL
     
@@ -27,6 +29,7 @@ class Store {
     
     init(url: URL) {
         self.localBaseURL = url
+        self.webservice = Webservice(store: self)
         self.rootDirectory = readRootDirectory() ?? Directory(name: .rootDirectoryName, id: .rootDirectoryId)
         self.rootDirectory.store = self
     }
@@ -43,7 +46,7 @@ class Store {
         let json = rootDirectory.json
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
         try! data.write(to: localStoreLocationURL)
-        NotificationCenter.default.post(name: Store.changeNotification, object: notifying, userInfo: userInfo)
+        NotificationCenter.default.post(name: Store.changedNotification, object: notifying, userInfo: userInfo)
     }
     
     func item(atIdPath path: [String]) -> Item? {
