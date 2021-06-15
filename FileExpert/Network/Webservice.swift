@@ -15,9 +15,8 @@ enum WebserviceState {
 
 final class Webservice {
     
-    private var sate: WebserviceState = .waitingForTask
+    private var state: WebserviceState = .waitingForTask
     
-    private var processing = false
     private weak var store: Store!
     private var pendingItems: [PendingItem] = [] {
         didSet { saveQueue() }
@@ -54,8 +53,8 @@ final class Webservice {
     }
     
     func processChanges() {
-        guard !processing, let pending = pendingItems.first else { return }
-        processing = true
+        guard self.state != .processingQueue, let pending = pendingItems.first else { return }
+        self.state = .processingQueue
         
         if pending.change == .create {
             if let id = pending.idPath.last, pending.idPath.count >= 2 {
@@ -64,8 +63,18 @@ final class Webservice {
                 SpreadsheetService.shared.addRecord(sr) {[weak self] result in
                     guard let s = self else { return }
                     if case let .error(e) = result {
-                        
-                        
+                        switch e {
+                        case ChangeError.incorrectSpreadsheetFormatReturned:
+                            s.pendingItems.removeFirst()
+                            s.state = .waitingForTask
+                        case ChangeError.notAuthorized:
+                            s.state = WebserviceState.waitingForUserAuthentication
+                        case ChangeError.zeroRecordsUpdated:
+                            s.state = .waitingForTask
+                        default:
+                            s.state = .waitingForTask
+                        }
+                        NotificationCenter.default.post(name: Store.changedNotification, object: e, userInfo: nil)
                     } else {
                         s.pendingItems.removeFirst()
                         if let item = s.store.item(atIdPath: pending.idPath),
