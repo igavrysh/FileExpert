@@ -39,7 +39,7 @@ class SpreadsheetService {
                       let rows = valueRange.values as? [[String]]
                 else {
                     DispatchQueue.main.async {
-                        completion(.error(self.errorWithDesc("Incorrect spreadsheet format, other than string values in cells")))
+                        completion(.error(ChangeError.incorrectSpreadsheetFormatReturned))
                     }
                     return
                 }
@@ -49,12 +49,12 @@ class SpreadsheetService {
                     // load only those items that are attached to current folder
                     // TODO: review this logic and adjust when switched to prod level API
                     if (row.count != 4) {
-                        completion(.error(self.errorWithDesc("Incorrect spreadsheet format, number of columns not equal 4")))
+                        completion(.error(ChangeError.incorrectSpreadsheetFormatReturned))
                         return
                     } else {
                         guard let type = SheetRecordType(rawValue: row[2])
                         else {
-                            completion(.error(self.errorWithDesc("Incorrect spreadsheet format, record type is other then f - file or d - directory")))
+                            completion(.error(ChangeError.incorrectSpreadsheetFormatReturned))
                             return
                         }
                         sheetRecrods.append(SheetRecord(id: row[0], parentId: row[1], type: type, name: row[3]))
@@ -79,7 +79,7 @@ class SpreadsheetService {
         query.includeValuesInResponse = true
         guard let currentUser = GIDSignIn.sharedInstance().currentUser
         else {
-            completion(.error(errorWithDesc("Please, authorize with 👤 button to add items")))
+            completion(.error(ChangeError.notAuthorized))
             return nil
         }
         service.authorizer = currentUser.authentication.fetcherAuthorizer()
@@ -91,25 +91,25 @@ class SpreadsheetService {
         
             guard let respone = (result as? GTLRSheets_AppendValuesResponse)?.updates
             else {
-                completion(.error(self.errorWithDesc("Incorrect spreadsheet format")))
+                completion(.error(ChangeError.incorrectSpreadsheetFormatReturned))
                 return
             }
             
             guard let valueRange = respone.updatedData,
                   let rows = valueRange.values as? [[String]]
             else {
-                completion(.error(self.errorWithDesc("Incorrect spreadsheet update during adding records")))
+                completion(.error(ChangeError.incorrectSpreadsheetFormatReturned))
                 return
             }
             
             guard let row = rows.first else {
-                completion(.error(self.errorWithDesc("Incorrect updated rows")))
+                completion(.error(ChangeError.zeroRecordsUpdated))
                 return
             }
             
             guard let type = SheetRecordType(rawValue: row[2])
             else {
-                completion(.error(self.errorWithDesc("Incorrect spreadsheet format after record adding, record type is other then f - file or d - directory")))
+                completion(.error(ChangeError.incorrectSpreadsheetFormatReturned))
                 return
             }
         
@@ -119,8 +119,5 @@ class SpreadsheetService {
         return  SpreadsheetNetworkTask(with: t)
     }
     
-    private func errorWithDesc(_ desc: String) -> Error {
-        return NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: desc]) as Error
-    }
 }
 

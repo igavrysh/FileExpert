@@ -7,7 +7,16 @@
 
 import UIKit
 
+enum WebserviceState {
+    case processingQueue
+    case waitingForTask
+    case waitingForUserAuthentication
+}
+
 final class Webservice {
+    
+    private var sate: WebserviceState = .waitingForTask
+    
     private var processing = false
     private weak var store: Store!
     private var pendingItems: [PendingItem] = [] {
@@ -49,29 +58,36 @@ final class Webservice {
         processing = true
         
         if pending.change == .create {
-            if let id = pending.idPath.last,
-               pending.idPath.count >= 2 {
+            if let id = pending.idPath.last, pending.idPath.count >= 2 {
                 let parentId = pending.idPath[pending.idPath.count - 2]
                 let sr = SheetRecord(id: id, parentId: parentId, type: pending.isDirectory ? .directory : .file, name: pending.name)
                 SpreadsheetService.shared.addRecord(sr) {[weak self] result in
                     guard let s = self else { return }
-                    s.processing = false
-                    s.pendingItems.removeFirst()
-                    if let item = s.store.item(atIdPath: pending.idPath),
-                       let parent = item.parent,
-                       let index = parent.contents.firstIndex(where: { $0 === item })
-                    {
-                        NotificationCenter.default.post(name: Store.changedNotification, object: item, userInfo: [
-                            Item.changeReasonKey: Item.reloaded,
-                            Item.oldValueKey: index,
-                            Item.newValueKey: index,
-                            Item.parentFolderKey: parent
-                        ])
+                    if case let .error(e) = result {
+                        
+                        
+                    } else {
+                        s.pendingItems.removeFirst()
+                        if let item = s.store.item(atIdPath: pending.idPath),
+                           let parent = item.parent,
+                           let index = parent.contents.firstIndex(where: { $0 === item })
+                        {
+                            NotificationCenter.default.post(name: Store.changedNotification, object: item, userInfo: [
+                                Item.changeReasonKey: Item.reloaded,
+                                Item.oldValueKey: index,
+                                Item.newValueKey: index,
+                                Item.parentFolderKey: parent
+                            ])
+                        }
                     }
                 }
+                
+            } else {
+                // TODO: do error notification here
+                pendingItems.removeFirst()
+                processChanges()
             }
         }
-        
     }
 }
 
@@ -118,9 +134,10 @@ extension PendingItem {
         let idPath = parent.idPath + [item.id]
         self.init(change: change, idPath: idPath, name: item.name, isDirectory: item is Directory)
     }
-    
 }
 
 enum ChangeError: String, Error {
-    case itemArrayExists = "itemAlreadyExists"
+    case notAuthorized = "notAuthorized"
+    case incorrectSpreadsheetFormatReturned = "incorrectSpreadsheetFormatReturned"
+    case zeroRecordsUpdated = "zeroRecordsUpdated"
 }

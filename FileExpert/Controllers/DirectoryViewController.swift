@@ -123,22 +123,16 @@ extension DirectoryViewController {
 
 extension DirectoryViewController {
     func configureObserver() {
-        NotificationCenter.default.addObserver(forName: Store.changedNotification,
-                                               object: nil,
-                                               queue: OperationQueue.main,
-                                               using: { n in self.handleChangeNotification(n)})
+        NotificationCenter.default.addObserver(forName: Store.changedNotification, object: nil, queue: OperationQueue.main, using: { n in self.handleChangeNotification(n)})
+        
+        NotificationCenter.default.addObserver(forName: AppState.changedNotification, object: nil, queue: OperationQueue.main, using: { n in self.handleAppStateChangedNotification(n)})
     }
     
-    @objc func handleChangeNotification(_ notification: Notification) {
-        if let f = notification.object as? File, f.parent === directory {
-            self.applySnapshot()
-        }
-        if let d = notification.object as? Directory, d === directory || d.parent == directory  {
-            self.applySnapshot()
-        }
-        
-        if notification.object is AppState {
-            
+    @objc func handleAppStateChangedNotification(_ notification: Notification) {
+        if let changeReason = notification.userInfo?[AppState.changeReasonKey] as? String,
+           changeReason == AppState.styleChanged,
+           let style = notification.userInfo?[AppState.styleKey] as? DirectoryViewStyle
+        {
             var topIndexPath: IndexPath?
             for cell in self.directoryCollectionView.visibleCells {
                 guard let tip = topIndexPath else {
@@ -153,14 +147,27 @@ extension DirectoryViewController {
             }
             let selectedIndexPath = self.directoryCollectionView.indexPathsForSelectedItems?.first
             selectedIndexPath.map { self.directoryCollectionView.deselectItem(at: $0, animated: false) }
-            directoryCollectionView.setCollectionViewLayout(self.getLayout(), animated: true) { (finished) in
+            directoryCollectionView.setCollectionViewLayout(self.getLayout(for: style), animated: true) { (finished) in
                 self.dataSource.apply(self.dataSource.snapshot(), animatingDifferences: true)
                 self.directoryCollectionView.selectItem(at: selectedIndexPath, animated: true, scrollPosition: [])
                 selectedIndexPath.map {self.directoryCollectionView.selectItem(at: $0, animated: true, scrollPosition: []) }
                 //topIndexPath.map { self.directoryCollectionView.scrollToItem(at: $0, at: UICollectionView.ScrollPosition.centeredVertically, animated: true) }
             }
             toggleButton.image = getAppStateIconImage()
+            
         }
+        
+    }
+    
+    @objc func handleChangeNotification(_ notification: Notification) {
+        if let f = notification.object as? File, f.parent === directory {
+            self.applySnapshot()
+        }
+        if let d = notification.object as? Directory, d === directory || d.parent == directory  {
+            self.applySnapshot()
+        }
+        
+       
     }
 }
 
@@ -272,9 +279,9 @@ extension DirectoryViewController {
         return layout
     }
     
-    func getLayout() -> UICollectionViewLayout {
+    func getLayout(for style: DirectoryViewStyle) -> UICollectionViewLayout {
         var layout: UICollectionViewLayout!
-        switch AppState.shared.style {
+        switch style {
         case .icons:
             layout = createGridLayout()
         default:
@@ -285,7 +292,7 @@ extension DirectoryViewController {
     
     func configureHierarchy() {
         view.backgroundColor = .systemBackground
-        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: getLayout())
+        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: getLayout(for: AppState.shared.style))
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)

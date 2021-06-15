@@ -51,6 +51,38 @@ class IconViewCell: UICollectionViewListCell {
                                         separatorViewLeading: NSLayoutConstraint,
                                         separatorViewTrailing: NSLayoutConstraint,
                                         separatorViewBottom: NSLayoutConstraint)?
+    var styleInternal: DirectoryViewStyle = .icons
+    var style: DirectoryViewStyle {
+        get{
+            print("i can do editional work when setter set value  ")
+            return self.styleInternal
+        }
+        set(newValue){
+            if self.styleInternal != newValue {
+                self.styleInternal = newValue
+                switch self.styleInternal {
+                case .icons:
+                    var background = UIBackgroundConfiguration.listPlainCell()
+                    background.cornerRadius = 8
+                    background.strokeColor = .systemGray3
+                    background.strokeWidth = 1.0 / self.traitCollection.displayScale
+                    self.backgroundConfiguration = background
+                    contentConfiguration = nil
+                    accessories = []
+                case .list:
+                    let background = UIBackgroundConfiguration.listPlainCell()
+                    self.backgroundConfiguration = background
+                    let content = self.defaultContentConfiguration()
+                    contentConfiguration = content
+                    if item is Directory {
+                        accessories = [.disclosureIndicator()]
+                    }
+                }
+            }
+            
+        }
+
+    }
     
     let iconView: UIImageView = {
         var i = UIImageView()
@@ -146,12 +178,9 @@ class IconViewCell: UICollectionViewListCell {
 
 extension IconViewCell {
     func configureHierarchy() {
-        setupContentForStyle(AppState.shared.style)
-        
+        self.style = AppState.shared.style
         iconSize = frame.height * cellFillRatioIcon
-        
         nameLabel.text = "placeholder"
-    
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         iconView.translatesAutoresizingMaskIntoConstraints = false
         alignmentView1.translatesAutoresizingMaskIntoConstraints = false
@@ -213,14 +242,17 @@ extension IconViewCell {
 }
 
 extension IconViewCell {
+    
     func configureObserver() {
-        NotificationCenter.default.addObserver(forName: Store.changedNotification, object: nil, queue: OperationQueue.main, using: {n in self.handleChangeNotification(n)})
+        NotificationCenter.default.addObserver(forName: AppState.changedNotification, object: nil, queue: OperationQueue.main, using: {n in self.handleChangeNotification(n)})
     }
     
     @objc func handleChangeNotification(_ notification: Notification) {
-        if notification.object is AppState {
-            self.setupContentForStyle(AppState.shared.style)
-            self.activateConstraintsForStyle(AppState.shared.style, animated: true)
+        if let changeReason = notification.userInfo?[AppState.changeReasonKey] as? String,
+           changeReason == AppState.styleChanged,
+           let style = notification.userInfo?[AppState.styleKey] as? DirectoryViewStyle
+        {
+            self.activateConstraintsForStyle(style, animated: true)
         }
     }
     
@@ -290,27 +322,6 @@ extension IconViewCell {
         transformation.map { $0() }
         if animated {
             UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: { self.layoutIfNeeded()}, completion: nil)
-        }
-    }
-    
-    func setupContentForStyle(_ style: DirectoryViewStyle) {
-        switch style {
-        case .icons:
-            var background = UIBackgroundConfiguration.listPlainCell()
-            background.cornerRadius = 8
-            background.strokeColor = .systemGray3
-            background.strokeWidth = 1.0 / self.traitCollection.displayScale
-            self.backgroundConfiguration = background
-            contentConfiguration = nil
-            accessories = []
-        case .list:
-            let background = UIBackgroundConfiguration.listPlainCell()
-            self.backgroundConfiguration = background
-            let content = self.defaultContentConfiguration()
-            contentConfiguration = content
-            if item is Directory {
-                accessories = [.disclosureIndicator()]
-            }
         }
     }
 }

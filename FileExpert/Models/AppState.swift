@@ -7,14 +7,17 @@
 
 import Foundation
 
-enum DirectoryViewStyle {
-    case icons
-    case list
+import GoogleSignIn
+
+enum DirectoryViewStyle: String {
+    case icons = "icons"
+    case list = "list"
 }
 
-class AppState {
+class AppState : NSObject {
     
-    static let changeNotification = Notification.Name("AppStateChanged")
+    static let changedNotification = Notification.Name("AppStateChanged")
+
     
     static let shared = AppState(style: .icons)
     
@@ -25,11 +28,8 @@ class AppState {
     }
     
     func toggleNextStyle() {
-        let prevStyle = self.style
         self.styleInternal = getNextStyle()
-        NotificationCenter.default.post(name: Store.changedNotification, object: self, userInfo: [
-                                            AppState.previousStyle: prevStyle,
-                                            AppState.style: self.style])
+        NotificationCenter.default.post(name: AppState.changedNotification, object: self, userInfo: [AppState.changeReasonKey: AppState.styleChanged, AppState.styleKey: style])
     }
     
     func getNextStyle() -> DirectoryViewStyle {
@@ -43,11 +43,38 @@ class AppState {
     
     init(style: DirectoryViewStyle) {
         self.styleInternal = style
+        super.init()
+        GIDSignIn.sharedInstance().delegate = self
+
+    }
+}
+
+extension AppState: GIDSignInDelegate {
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        if let _ = error {
+            return
+        }
+        if let u = user {
+            Foundation.NotificationCenter.default.post(name: AppState.changedNotification, object: self, userInfo: [AppState.changeReasonKey: AppState.userSignedIn, AppState.userKey: u])
+        }
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        if let _ = error {
+            return
+        }
+        if let u = user {
+            NotificationCenter.default.post(name: AppState.changedNotification, object: self, userInfo: [AppState.changeReasonKey: AppState.userSignedOut, AppState.userKey: u])
+        }
     }
 }
 
 extension AppState {
-    static let previousStyle = "previousStyle"
-    static let style = "style"
+    static let styleKey = "style"
+    static let changeReasonKey = "reason"
+    static let styleChanged = "styleChanged"
+    static let userSignedIn = "userSignedIn"
+    static let userSignedOut = "userSignedOut"
+    static let userKey = "user"
 }
 
