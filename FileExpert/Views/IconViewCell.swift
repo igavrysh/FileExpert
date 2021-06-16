@@ -58,30 +58,26 @@ class IconViewCell: UICollectionViewListCell {
             return self.styleInternal
         }
         set(newValue){
-            if self.styleInternal != newValue {
-                self.styleInternal = newValue
-                switch self.styleInternal {
-                case .icons:
-                    var background = UIBackgroundConfiguration.listPlainCell()
-                    background.cornerRadius = 8
-                    background.strokeColor = .systemGray3
-                    background.strokeWidth = 1.0 / self.traitCollection.displayScale
-                    self.backgroundConfiguration = background
-                    contentConfiguration = nil
-                    accessories = []
-                case .list:
-                    let background = UIBackgroundConfiguration.listPlainCell()
-                    self.backgroundConfiguration = background
-                    let content = self.defaultContentConfiguration()
-                    contentConfiguration = content
-                    if item is Directory {
-                        accessories = [.disclosureIndicator()]
-                    }
+            self.styleInternal = newValue
+            switch self.styleInternal {
+            case .icons:
+                var background = UIBackgroundConfiguration.listPlainCell()
+                background.cornerRadius = 8
+                background.strokeColor = .systemGray3
+                background.strokeWidth = 1.0 / self.traitCollection.displayScale
+                self.backgroundConfiguration = background
+                contentConfiguration = nil
+                accessories = []
+            case .list:
+                let background = UIBackgroundConfiguration.listPlainCell()
+                self.backgroundConfiguration = background
+                let content = self.defaultContentConfiguration()
+                contentConfiguration = content
+                if item is Directory {
+                    accessories = [.disclosureIndicator()]
                 }
             }
-            
         }
-
     }
     
     let iconView: UIImageView = {
@@ -253,6 +249,7 @@ extension IconViewCell {
            let style = notification.userInfo?[AppState.styleKey] as? DirectoryViewStyle
         {
             self.activateConstraintsForStyle(style, animated: true)
+            self.style = style
         }
     }
     

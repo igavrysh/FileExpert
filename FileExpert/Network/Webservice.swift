@@ -53,6 +53,7 @@ final class Webservice {
     }
     
     func processChanges() {
+        
         guard self.state != .processingQueue, let pending = pendingItems.first else { return }
         self.state = .processingQueue
         
@@ -72,6 +73,7 @@ final class Webservice {
                         case ChangeError.zeroRecordsUpdated:
                             s.state = .waitingForTask
                         default:
+                            // Network Error, e.g. the request timed out, etc
                             s.state = .waitingForTask
                         }
                         NotificationCenter.default.post(name: Store.changedNotification, object: e, userInfo: nil)
@@ -88,15 +90,21 @@ final class Webservice {
                                 Item.parentFolderKey: parent
                             ])
                         }
+                        s.state = .waitingForTask
                     }
                 }
                 
             } else {
                 // TODO: do error notification here
                 pendingItems.removeFirst()
-                processChanges()
+                state = .waitingForTask
             }
         }
+        
+        if state == .waitingForTask {
+            processChanges()
+        }
+        
     }
 }
 

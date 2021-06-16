@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 class Store {
     
     static let changedNotification = Notification.Name("StoreChanged")
