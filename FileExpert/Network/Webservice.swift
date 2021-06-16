@@ -31,6 +31,7 @@ final class Webservice {
         
         NotificationCenter.default.addObserver(self, selector: #selector(storeDidChange(_:)), name: Store.changedNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appStateDidChange(_:)), name: AppState.changedNotification, object: nil)
     }
     
     private func loadQueue() {
@@ -52,8 +53,14 @@ final class Webservice {
         processChanges()
     }
     
+    @objc func appStateDidChange(_ note: Notification) {
+        if note.userInfo?[AppState.changeReasonKey] as? String == AppState.userSignedIn {
+            self.state = .waitingForTask
+            processChanges()
+        }
+    }
+    
     func processChanges() {
-        
         guard self.state != .processingQueue, let pending = pendingItems.first else { return }
         self.state = .processingQueue
         

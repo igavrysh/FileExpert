@@ -14,11 +14,10 @@ enum DirectoryViewStyle: String {
     case list = "list"
 }
 
-class AppState : NSObject {
+class AppState : NSObject, GIDSignInDelegate {
     
     static let changedNotification = Notification.Name("AppStateChanged")
 
-    
     static let shared = AppState(style: .icons)
     
     private var styleInternal: DirectoryViewStyle
@@ -45,13 +44,15 @@ class AppState : NSObject {
         self.styleInternal = style
         super.init()
         GIDSignIn.sharedInstance().delegate = self
-
     }
-}
 
-extension AppState: GIDSignInDelegate {
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        if let _ = error {
+        if let error = error {
+            if (error as NSError).code == GIDSignInErrorCode.hasNoAuthInKeychain.rawValue {
+                print("The user has not signed in before or they have since signed out.")
+            } else {
+                print("\(error.localizedDescription)")
+            }
             return
         }
         if let u = user {

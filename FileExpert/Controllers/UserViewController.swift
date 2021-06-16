@@ -10,8 +10,8 @@ import GoogleSignIn
 import Firebase
 import FirebaseFirestoreSwift
 
-class UserViewController: UIViewController, GIDSignInDelegate {
-    
+class UserViewController: UIViewController {
+
     let gidButton: GIDSignInButton = {
         let b = GIDSignInButton()
         b.translatesAutoresizingMaskIntoConstraints = false
@@ -29,9 +29,10 @@ class UserViewController: UIViewController, GIDSignInDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        GIDSignIn.sharedInstance()?.delegate = self
         GIDSignIn.sharedInstance()?.presentingViewController = self
         setupUI()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appStateDidChange(_:)), name: AppState.changedNotification, object: nil)
     }
     
     func configureFilestore() {
@@ -59,16 +60,15 @@ class UserViewController: UIViewController, GIDSignInDelegate {
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        if let error = error {
-            if (error as NSError).code == GIDSignInErrorCode.hasNoAuthInKeychain.rawValue {
-                print("The user has not signed in before or they have since signed out.")
-            } else {
-                print("\(error.localizedDescription)")
-            }
-            return
+    @objc func appStateDidChange(_ note: Notification) {
+        if note.userInfo?[AppState.changeReasonKey] as? String == AppState.userSignedIn,
+           let user = note.userInfo?[AppState.userKey] as? GIDGoogleUser
+        {
+            self.signIn(user: user)
         }
-        
+    }
+    
+    func signIn(user: GIDGoogleUser!) {
         DispatchQueue.global(qos: .background).async {
             let db = Firestore.firestore()
             var ref: DocumentReference? = nil
@@ -90,9 +90,7 @@ class UserViewController: UIViewController, GIDSignInDelegate {
                 }
             }
         }
-        
         let fvc = MainViewController()
-        fvc.navigationItem.title = "HOHO"
         fvc.modalPresentationStyle = .fullScreen
         self.present(fvc, animated: true, completion: nil)
     }
